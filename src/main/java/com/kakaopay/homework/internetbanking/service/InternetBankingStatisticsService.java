@@ -73,10 +73,6 @@ public class InternetBankingStatisticsService {
                         statisticsDetailRepository.saveAndFlush(detail)));
     }
 
-    public DeviceStatisticsResponse getDeviceStatistics (Short year) {
-        return year == null ? getYearlyDeviceStatistics() : getDeviceStatisticsByYear(year);
-    }
-
     @Transactional(readOnly = true)
     @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getDevices'")
     public DeviceStatisticsResponse getDevices () {

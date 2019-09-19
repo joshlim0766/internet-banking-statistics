@@ -34,16 +34,16 @@ public class InternetBankingStatisticsController {
             value = "/device/yearly",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public DeviceStatisticsResponse getDeviceStatistics (@RequestParam(value="year", required = false) Short year) {
-        DeviceStatisticsResponse response = null;
-        if (year != null) {
-            response = internetBankingStatisticsService.getDeviceStatisticsByYear(year);
-        }
-        else {
-            response = internetBankingStatisticsService.getYearlyDeviceStatistics();
-        }
+    public DeviceStatisticsResponse getDeviceStatistics () {
+            return internetBankingStatisticsService.getYearlyDeviceStatistics();
+    }
 
-        return response;
+    @GetMapping(
+            value = "/device/yearly/{year}",
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
+    )
+    public DeviceStatisticsResponse getDeviceStatistics (@PathVariable(value="year") Short year) {
+        return internetBankingStatisticsService.getDeviceStatisticsByYear(year);
     }
 
     @GetMapping(
