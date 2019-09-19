@@ -6,7 +6,6 @@ import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResp
 import com.kakaopay.homework.internetbanking.repository.DeviceInformationRepository;
 import com.kakaopay.homework.internetbanking.repository.StatisticsDetailRepository;
 import com.kakaopay.homework.internetbanking.repository.StatisticsRepository;
-import com.kakaopay.homework.internetbanking.utility.DeviceIdGenerator;
 import com.kakaopay.homework.internetbanking.utility.csv.StatisticsTable;
 import com.kakaopay.homework.internetbanking.utility.csv.RawStatisticsDataParser;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +42,8 @@ public class InternetBankingStatisticsService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @PostConstruct
-    public void init () {
-    }
-
     @Transactional
-    @CacheEvict(value = "localCache")
+    @CacheEvict(value = "localCache", allEntries = true)
     public void loadData () {
         ClassPathResource resource = new ClassPathResource("data.csv");
 
@@ -83,7 +78,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "localCache")
+    @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getDevices'")
     public DeviceStatisticsResponse getDevices () {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
@@ -95,7 +90,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "localCache")
+    @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getYearlyDeviceStatistics'")
     public DeviceStatisticsResponse getYearlyDeviceStatistics () {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 

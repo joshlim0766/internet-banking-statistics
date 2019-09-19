@@ -1,6 +1,7 @@
 package com.kakaopay.homework.internetbanking.repository;
 
 import com.kakaopay.homework.internetbanking.model.StatisticsSummary;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

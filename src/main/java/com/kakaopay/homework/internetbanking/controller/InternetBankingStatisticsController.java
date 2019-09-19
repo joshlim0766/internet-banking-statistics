@@ -7,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
 public class InternetBankingStatisticsController {
@@ -37,7 +35,15 @@ public class InternetBankingStatisticsController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
     public DeviceStatisticsResponse getDeviceStatistics (@RequestParam(value="year", required = false) Short year) {
-        return internetBankingStatisticsService.getDeviceStatistics(year);
+        DeviceStatisticsResponse response = null;
+        if (year != null) {
+            response = internetBankingStatisticsService.getDeviceStatisticsByYear(year);
+        }
+        else {
+            response = internetBankingStatisticsService.getYearlyDeviceStatistics();
+        }
+
+        return response;
     }
 
     @GetMapping(
