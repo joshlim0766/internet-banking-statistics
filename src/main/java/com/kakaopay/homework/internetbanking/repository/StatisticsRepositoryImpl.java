@@ -7,7 +7,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
-public class InternetBankingStatisticsRepositoryImpl implements InternetBankingStatisticsRepositoryCustom {
+public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
 
     private static final String MAX_RATE_STAT_QUERY =
             "SELECT ibsd.uid AS uid, di.id AS device_id, di.name AS device_name, ibr.year AS year, ibr.rate AS rate "+

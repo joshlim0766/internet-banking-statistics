@@ -1,7 +1,5 @@
 package com.kakaopay.homework.internetbanking.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,5 +25,5 @@ public class DeviceInformation {
             mappedBy = "deviceInformation",
             cascade = CascadeType.ALL
     )
-    private List<InternetBankingStatisticsDetail> internetBankingStatisticsDetails = new ArrayList<>();
+    private List<StatisticsDetail> statisticsDetails = new ArrayList<>();
 }

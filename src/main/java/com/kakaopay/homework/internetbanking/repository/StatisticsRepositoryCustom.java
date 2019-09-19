@@ -4,7 +4,7 @@ import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
 
 import java.util.List;
 
-public interface InternetBankingStatisticsRepositoryCustom {
+public interface StatisticsRepositoryCustom {
     List<DeviceStatisticsDTO> getMaxRateStat ();
 
     DeviceStatisticsDTO getMaxRateStatByYear (short year);

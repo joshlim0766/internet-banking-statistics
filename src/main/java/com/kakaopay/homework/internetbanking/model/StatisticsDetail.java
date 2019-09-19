@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(
         name = "internet_banking_stat_detail"
 )
-public class InternetBankingStatisticsDetail {
+public class StatisticsDetail {
     @Column(name = "uid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -20,7 +20,7 @@ public class InternetBankingStatisticsDetail {
 
     @ManyToOne
     @JoinColumn(name = "internet_banking_stat_uid")
-    private InternetBankingStatistics parent;
+    private StatisticsSummary parent;
 
     @ManyToOne
     @JoinColumn(name = "device_id")

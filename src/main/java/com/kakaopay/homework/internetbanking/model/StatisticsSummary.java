@@ -27,7 +27,7 @@ import java.util.List;
                 )
         }
 )
-public class InternetBankingStatistics {
+public class StatisticsSummary {
     @Column(name = "uid")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,5 +44,5 @@ public class InternetBankingStatistics {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<InternetBankingStatisticsDetail> internetBankingStatisticsDetails = new ArrayList<>();
+    private List<StatisticsDetail> statisticsDetails = new ArrayList<>();
 }
