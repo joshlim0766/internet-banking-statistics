@@ -4,7 +4,10 @@ import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResp
 import com.kakaopay.homework.internetbanking.service.InternetBankingStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
@@ -14,11 +17,11 @@ public class InternetBankingStatisticsController {
     private InternetBankingStatisticsService internetBankingStatisticsService;
 
     @PostMapping(
-            value = "/load",
-            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
-            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
+            value = "/load"
     )
-    public void loadData () {
+    public ResponseEntity<?> loadData () {
+        internetBankingStatisticsService.loadData();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(

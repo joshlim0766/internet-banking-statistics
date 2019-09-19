@@ -74,16 +74,16 @@ public class RawStatisticsDataParser {
                 for (int i = 0 ; i < row.length; i++) {
                     if (i == ColumnIndex.YEAR.getIndex()) {
                         year = Short.valueOf(row[i]);
-                        statisticsTable.getCsvRowMap().put(year, new StatisticsColumn());
+                        statisticsTable.getStatisticsColumnMap().put(year, new StatisticsColumn());
                     }
                     else if (i == ColumnIndex.RATE.getIndex()) {
-                        StatisticsColumn statisticsColumn = statisticsTable.getCsvRowMap().get(year);
+                        StatisticsColumn statisticsColumn = statisticsTable.getStatisticsColumnMap().get(year);
                         StatisticsSummary summary = statisticsColumn.getStatisticsSummary();
                         summary.setYear(year);
                         summary.setRate(Double.valueOf(row[i]));
                     }
                     else {
-                        StatisticsColumn statisticsColumn = statisticsTable.getCsvRowMap().get(year);
+                        StatisticsColumn statisticsColumn = statisticsTable.getStatisticsColumnMap().get(year);
                         StatisticsDetail detail = new StatisticsDetail();
 
                         DeviceInformation deviceInformation = deviceMap.get(i);

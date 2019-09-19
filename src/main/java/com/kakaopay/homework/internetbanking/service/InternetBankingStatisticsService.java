@@ -1,5 +1,6 @@
 package com.kakaopay.homework.internetbanking.service;
 
+import com.kakaopay.homework.exception.CsvParseException;
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResponse;
 import com.kakaopay.homework.internetbanking.repository.DeviceInformationRepository;
@@ -11,10 +12,13 @@ import com.kakaopay.homework.internetbanking.utility.csv.RawStatisticsDataParser
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -42,23 +46,36 @@ public class InternetBankingStatisticsService {
 
     @PostConstruct
     public void init () {
-        loadData();
     }
 
     @Transactional
     public void loadData () {
-        StatisticsTable statisticsTable = rawStatisticsDataParser.parse("./data.csv");
+        ClassPathResource resource = new ClassPathResource("data.csv");
 
-        statisticsTable.getDeviceMap().forEach((deviceId, deviceInformation) ->
-                deviceInformationRepository.saveAndFlush(deviceInformation));
+        File dataFile = null;
 
-        statisticsTable.getCsvRowMap().forEach((year, csvRow) ->
-                statisticsRepository.saveAndFlush(csvRow.getStatisticsSummary()));
+        try {
+            dataFile = resource.getFile();
+        }
+        catch (IOException e) {
+            throw new CsvParseException("Failed to parse CSV : " + e.getMessage(), e);
+        }
 
-        statisticsTable.getCsvRowMap().forEach((year, csvRow) ->
-            csvRow.getStatisticsDetail().forEach((deviceId, statisticsDetail) ->
-                    statisticsDetailRepository.saveAndFlush(statisticsDetail))
-        );
+        deviceInformationRepository.deleteAll();
+        statisticsRepository.deleteAll();
+        statisticsDetailRepository.deleteAll();
+
+        StatisticsTable statisticsTable = rawStatisticsDataParser.parse(dataFile.getAbsolutePath());
+
+        statisticsTable.getDeviceMap().forEach((deviceId, deviceInfo) ->
+                deviceInformationRepository.saveAndFlush(deviceInfo));
+
+        statisticsTable.getStatisticsColumnMap().forEach((year, statisticsColumn) ->
+                statisticsRepository.saveAndFlush(statisticsColumn.getStatisticsSummary()));
+
+        statisticsTable.getStatisticsColumnMap().forEach((year, statisticsColumn) ->
+                statisticsColumn.getStatisticsDetail().forEach((deviceId, detail) ->
+                        statisticsDetailRepository.saveAndFlush(detail)));
     }
 
     public DeviceStatisticsResponse getDeviceStatistics (Short year) {

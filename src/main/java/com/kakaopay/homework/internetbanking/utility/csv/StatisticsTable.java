@@ -11,6 +11,6 @@ import java.util.*;
 public class StatisticsTable {
     private LinkedHashMap<String, DeviceInformation> deviceMap = new LinkedHashMap<>();
 
-    private LinkedHashMap<Short, StatisticsColumn> csvRowMap = new LinkedHashMap<>();
+    private LinkedHashMap<Short, StatisticsColumn> statisticsColumnMap = new LinkedHashMap<>();
 }
 
