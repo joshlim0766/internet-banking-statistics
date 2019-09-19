@@ -12,6 +12,8 @@ import com.kakaopay.homework.internetbanking.utility.csv.RawStatisticsDataParser
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +41,6 @@ public class InternetBankingStatisticsService {
     private RawStatisticsDataParser rawStatisticsDataParser;
 
     @Autowired
-    private DeviceIdGenerator deviceIdGenerator;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     @PostConstruct
@@ -49,6 +48,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional
+    @CacheEvict(value = "localCache")
     public void loadData () {
         ClassPathResource resource = new ClassPathResource("data.csv");
 
@@ -83,6 +83,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "localCache")
     public DeviceStatisticsResponse getDevices () {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
@@ -94,6 +95,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "localCache")
     public DeviceStatisticsResponse getYearlyDeviceStatistics () {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
@@ -109,6 +111,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "localCache", key = "#year")
     public DeviceStatisticsResponse getDeviceStatisticsByYear (Short year) {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
@@ -121,6 +124,7 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "localCache", key = "#deviceId")
     public DeviceStatisticsResponse getMaxRateYear (String deviceId) {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 

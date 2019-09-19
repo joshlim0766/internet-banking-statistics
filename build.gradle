@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.opencsv:opencsv:4.6'
     implementation 'org.modelmapper:modelmapper:2.3.5'
+    implementation 'net.sf.ehcache:ehcache:2.10.6'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'

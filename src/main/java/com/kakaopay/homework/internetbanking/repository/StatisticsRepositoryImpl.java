@@ -56,7 +56,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
     public DeviceStatisticsDTO getMaxRateStatByYear (short year) {
         StringBuilder builder = new StringBuilder(MAX_RATE_STAT_QUERY);
 
-        builder.append(" AND YEAR = :year");
+        builder.append(" WHERE YEAR = :year");
 
         Query query = entityManager.createNativeQuery(builder.toString(), "deviceStatisticsMapper");
         query.setParameter("year", year);

@@ -1,15 +1,10 @@
 package com.kakaopay.homework;
 
-import com.kakaopay.homework.configuration.FileUploadConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
 
-@EnableConfigurationProperties(
-        {
-                FileUploadConfiguration.class
-        }
-)
+@EnableCaching
 @SpringBootApplication
 public class InternetBankingStatisticsApplication {
 
