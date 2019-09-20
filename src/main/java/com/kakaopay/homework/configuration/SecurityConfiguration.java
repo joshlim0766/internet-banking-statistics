@@ -41,10 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure (HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/oauth/**").denyAll()
-                .antMatchers("/api/v1/user/login").permitAll()
-                .antMatchers("/api/v1/user/signup").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/oauth/**").denyAll();
 
         httpSecurity.headers().frameOptions().disable();
     }

@@ -61,7 +61,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .authorizeRequests()
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                     .antMatchers("/").permitAll()
-                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .antMatchers("/api/v1/user/login").permitAll()
+                    .antMatchers("/api/v1/user/signup").permitAll()
+                    .antMatchers("/api/v1/statistics/**").hasAnyRole("ADMIN", "USER");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.kakaopay.homework.internetbanking.service;
 
 import com.kakaopay.homework.internetbanking.controller.dto.LoginResponse;
-import com.kakaopay.homework.internetbanking.controller.dto.RefreshTokenResponse;
 import com.kakaopay.homework.internetbanking.controller.dto.SingupResponse;
 import com.kakaopay.homework.internetbanking.model.RefreshToken;
 import com.kakaopay.homework.internetbanking.model.User;
@@ -69,8 +68,11 @@ public class UserService {
                 new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword(),
                         UserDetailServiceImpl.ROLE.of(user.getUserType()).toGrantedAuthority());
 
-        OAuth2AccessToken accessToken = jwtTokenService.issueAccessToken(
-                clientId, usernamePasswordAuthenticationToken, true);
+        OAuth2AccessToken accessToken = jwtTokenService.issueAccessToken(clientId, usernamePasswordAuthenticationToken);
+
+        if (accessToken == null) {
+            throw new RuntimeException("Couldn't issue access token");
+        }
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setRefreshToken(accessToken.getRefreshToken().getValue());
@@ -92,13 +94,23 @@ public class UserService {
         String password = loginInformation.getFirst("password");
         String clientId = loginInformation.getFirst("client_id");
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userName, password);
+        User user = userRepository.findByUserName(userName);
+        if (user == null) {
+            refreshTokenRespository.deleteRefreshTokenByUser(user);
+            throw new RuntimeException("Couldn't find user(" + userName + ")");
+        }
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userName, password,
+                UserDetailServiceImpl.ROLE.of(user.getUserType()).toGrantedAuthority());
 
         authenticationManager.authenticate(token);
 
-        OAuth2AccessToken accessToken = jwtTokenService.issueAccessToken(clientId, token, false);
+        OAuth2AccessToken accessToken = jwtTokenService.issueAccessToken(clientId, token);
+        if (accessToken == null) {
+            refreshTokenRespository.deleteRefreshTokenByUser(user);
+            throw new RuntimeException("Couldn't issue access token.");
+        }
 
-        User user = userRepository.findByUserName(userName);
         RefreshToken refreshToken = refreshTokenRespository.findRefreshTokenByUser(user);
         if (refreshToken != null) {
             refreshToken.setRefreshToken(accessToken.getRefreshToken().getValue());
