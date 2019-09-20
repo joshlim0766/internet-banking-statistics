@@ -2,6 +2,7 @@ package com.kakaopay.homework.internetbanking.model;
 
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,7 +28,14 @@ import java.util.List;
                 )
         }
 )
+@NoArgsConstructor
 public class StatisticsSummary {
+
+    public StatisticsSummary (short year, double rate) {
+        this.year = year;
+        this.rate = rate;
+    }
+
     @Column(name = "uid")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

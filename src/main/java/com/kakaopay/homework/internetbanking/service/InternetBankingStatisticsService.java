@@ -3,11 +3,14 @@ package com.kakaopay.homework.internetbanking.service;
 import com.kakaopay.homework.exception.CsvParseException;
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResponse;
+import com.kakaopay.homework.internetbanking.model.DeviceInformation;
+import com.kakaopay.homework.internetbanking.model.StatisticsDetail;
+import com.kakaopay.homework.internetbanking.model.StatisticsSummary;
 import com.kakaopay.homework.internetbanking.repository.DeviceInformationRepository;
 import com.kakaopay.homework.internetbanking.repository.StatisticsDetailRepository;
 import com.kakaopay.homework.internetbanking.repository.StatisticsRepository;
-import com.kakaopay.homework.internetbanking.utility.csv.StatisticsTable;
-import com.kakaopay.homework.internetbanking.utility.csv.RawStatisticsDataParser;
+import com.kakaopay.homework.internetbanking.utility.DeviceIdGenerator;
+import com.kakaopay.homework.internetbanking.utility.RawStatisticsDataParser;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +20,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -42,6 +45,39 @@ public class InternetBankingStatisticsService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private DeviceIdGenerator idGenerator;
+
+    private void createDeviceInformation (String[] row, List<DeviceInformation> deviceInformations) {
+        IntStream.range(2, row.length)
+                .mapToObj(i -> row[i])
+                .map(deviceName -> new DeviceInformation(idGenerator.generate(deviceName), deviceName))
+                .forEach(deviceInformation -> {
+                    deviceInformationRepository.saveAndFlush(deviceInformation);
+                    deviceInformations.add(deviceInformation);
+                });
+    }
+
+    private StatisticsSummary createStatisticsSummary (String[] row) {
+        StatisticsSummary summary = new StatisticsSummary(Short.valueOf(row[0]), Double.valueOf(row[1]));
+
+        statisticsRepository.saveAndFlush(summary);
+
+        return summary;
+    }
+
+    private void createStatisticsDetail (String[] row, StatisticsSummary summary, List<DeviceInformation> deviceInformations) {
+        String regex = "[+-]?(\\d+|\\d+\\.\\d+|\\.\\d+|\\d+\\.)([eE]\\d+)?";
+        List<Double> rates = IntStream.range(2, row.length)
+                .mapToObj(i -> row[i])
+                .map(value -> value.matches(regex) ? Double.valueOf(value) : 0.0f)
+                .collect(Collectors.toList());
+
+        IntStream.range(0, rates.size())
+                .mapToObj(i -> new StatisticsDetail(rates.get(i), summary, deviceInformations.get(i)))
+                .forEach(detail -> statisticsDetailRepository.saveAndFlush(detail));
+    }
+
     @Transactional
     @CacheEvict(value = "localCache", allEntries = true)
     public void loadData () {
@@ -60,17 +96,17 @@ public class InternetBankingStatisticsService {
         statisticsRepository.deleteAll();
         statisticsDetailRepository.deleteAll();
 
-        StatisticsTable statisticsTable = rawStatisticsDataParser.parse(dataFile.getAbsolutePath());
+        List<DeviceInformation> deviceInformations = new ArrayList<>();
 
-        statisticsTable.getDeviceMap().forEach((deviceId, deviceInfo) ->
-                deviceInformationRepository.saveAndFlush(deviceInfo));
-
-        statisticsTable.getStatisticsColumnMap().forEach((year, statisticsColumn) ->
-                statisticsRepository.saveAndFlush(statisticsColumn.getStatisticsSummary()));
-
-        statisticsTable.getStatisticsColumnMap().forEach((year, statisticsColumn) ->
-                statisticsColumn.getStatisticsDetail().forEach((deviceId, detail) ->
-                        statisticsDetailRepository.saveAndFlush(detail)));
+        rawStatisticsDataParser.parse(dataFile.getAbsolutePath(), (isHeader, row) -> {
+            if (isHeader) {
+                createDeviceInformation(row, deviceInformations);
+            }
+            else {
+                StatisticsSummary summary = createStatisticsSummary(row);
+                createStatisticsDetail(row, summary, deviceInformations);
+            }
+        });
     }
 
     @Transactional(readOnly = true)

@@ -14,6 +14,12 @@ import java.util.List;
         name = "device_info"
 )
 public class DeviceInformation {
+
+    public DeviceInformation (String deviceId, String deviceName) {
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+    }
+
     @Id
     @Column(name = "id")
     private String deviceId;

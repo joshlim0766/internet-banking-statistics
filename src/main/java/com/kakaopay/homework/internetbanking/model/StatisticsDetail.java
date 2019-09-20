@@ -1,6 +1,7 @@
 package com.kakaopay.homework.internetbanking.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -9,7 +10,15 @@ import javax.persistence.*;
 @Table(
         name = "internet_banking_stat_detail"
 )
+@NoArgsConstructor
 public class StatisticsDetail {
+
+    public StatisticsDetail (double rate, StatisticsSummary summary, DeviceInformation deviceInformation) {
+        this.rate = rate;
+        this.parent = summary;
+        this.deviceInformation = deviceInformation;
+    }
+
     @Column(name = "uid")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
