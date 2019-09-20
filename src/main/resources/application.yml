@@ -23,11 +23,17 @@ spring:
       enabled: true
       path: /h2-console
 
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 1000MB
-      max-request-size: 1024MB
-
-file:
-  upload-dir: ./upload
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value:
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm3yhF0qknbb9HCMCzogE
+          JW+wRCrSNBIayYuSRAohWmb/mpxTWBCZzqsnKn8rDv48ZpBg2rKJEz8Uw0eqhmVk
+          bgRf9rnmcdJ27+Zdq/jT7ICAYhWIwN+KvcQHi9mBEyuWdBNIRVgfi1rH6Np+uRge
+          hfSY3eLOJVzejU+kqfUx0WviLRFnLYGYmf/yrorogEkPYTGgUW3rDESjx0Cb/tSP
+          6vad12YuGxqOqap6JYSler0GR+08EoQx8TxR+oafs2fR7E0w/AMg3YQoVMKzl256
+          zRypKgaIoPr4u7TK14kSDQTNbQolAfkN3smmJYCZ5P2v3d4TdJK3BuaBVNvQxF8F
+          rwIDAQAB
+          -----END PUBLIC KEY-----

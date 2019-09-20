@@ -156,6 +156,10 @@ public class InternetBankingStatisticsService {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
         DeviceStatisticsDTO dto = statisticsRepository.getMaxRateYearByDevice(deviceId);
+        if (dto == null) {
+            throw new RuntimeException("Device(" + deviceId + ") not found.");
+        }
+
         dto.setDeviceId(null);
 
         response.setDeviceStatisticsDTO(dto);

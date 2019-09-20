@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface DeviceInformationRepository extends JpaRepository<DeviceInformation, String> {
+public interface DeviceInformationRepository extends JpaRepository<DeviceInformation, Long> {
     long countByDeviceId (String deviceId);
 
     long countByDeviceName (String deviceName);

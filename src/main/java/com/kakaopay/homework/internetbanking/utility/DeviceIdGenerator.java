@@ -1,6 +1,6 @@
 package com.kakaopay.homework.internetbanking.utility;
 
-import com.kakaopay.homework.exception.DeviceIdGenerationFailureException;
+import com.kakaopay.homework.exception.DeviceIdGenerateException;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -40,7 +40,7 @@ public class DeviceIdGenerator {
             return bytesToHex(sha256(uuid.toString()));
         }
         catch (Exception e) {
-            throw new DeviceIdGenerationFailureException("Failed to generate device id : " + e.getMessage(), e);
+            throw new DeviceIdGenerateException("Failed to generate device id : " + e.getMessage(), e);
         }
     }
 }

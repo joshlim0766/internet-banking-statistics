@@ -10,7 +10,7 @@ import java.util.List;
 public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
 
     private static final String MAX_RATE_STAT_QUERY =
-            "SELECT ibsd.uid AS uid, di.id AS device_id, di.name AS device_name, ibr.year AS year, ibr.rate AS rate "+
+            "SELECT ibsd.uid AS uid, di.device_id AS device_id, di.device_name AS device_name, ibr.year AS year, ibr.rate AS rate "+
             "  FROM " +
             "       ( "+
             "        SELECT ibsg.uid AS detail_id, ibs.year AS year, ibsg.rate AS rate "+
@@ -28,19 +28,19 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "               ) AS ibsg ON ibsg.parent_id = ibs.uid " +
             "       ) AS ibr " +
             "  JOIN internet_banking_stat_detail AS ibsd ON ibsd.uid = ibr.detail_id " +
-            "  JOIN device_info AS di ON di.id = ibsd.device_id";
+            "  JOIN device_info AS di ON di.uid = ibsd.device_id";
 
     private static final String MAX_RATE_YEAR_BY_DEVICE_QUERY =
-            "SELECT ibsd.uid AS uid, di.id AS device_id, di.name AS device_name, ibs.year AS year, ibsdg.rate AS rate "+
+            "SELECT ibsd.uid AS uid, di.device_id AS device_id, di.device_name AS device_name, ibs.year AS year, ibsdg.rate AS rate "+
             "  FROM internet_banking_stat_detail ibsd "+
             "  JOIN ( " +
             "        SELECT MAX(rate) AS rate, device_id " +
             "          FROM internet_banking_stat_detail " +
             "         group by device_id " +
             "       ) ibsdg on ibsd.device_id = ibsdg.device_id and ibsd.rate = ibsdg.rate " +
-            "  JOIN device_info di on di.id= ibsd.device_id " +
+            "  JOIN device_info di on di.uid= ibsd.device_id " +
             "  JOIN internet_banking_stat ibs on ibsd.internet_banking_stat_uid = ibs.uid " +
-            " WHERE di.id = :deviceId  ";
+            " WHERE di.device_id = :deviceId  ";
 
     @PersistenceContext
     private EntityManager entityManager;

@@ -24,6 +24,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.8.RELEASE'
     implementation 'com.opencsv:opencsv:4.6'
     implementation 'org.modelmapper:modelmapper:2.3.5'
     implementation 'net.sf.ehcache:ehcache:2.10.6'

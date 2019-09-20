@@ -21,10 +21,14 @@ public class DeviceInformation {
     }
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "uid")
+    private Long uid;
+
+    @Column(name = "device_id")
     private String deviceId;
 
-    @Column(name = "name")
+    @Column(name = "device_name")
     private String deviceName;
 
     @OneToMany(
