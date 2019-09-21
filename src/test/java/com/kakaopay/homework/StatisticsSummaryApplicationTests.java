@@ -1,10 +1,11 @@
 package com.kakaopay.homework;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResponse;
-import com.kakaopay.homework.internetbanking.service.InternetBankingStatisticsService;
-import com.kakaopay.homework.internetbanking.utility.csv.RawData;
-import com.kakaopay.homework.internetbanking.utility.csv.RawDataParser;
+import com.kakaopay.homework.internetbanking.controller.dto.DeviceDTO;
+import com.kakaopay.homework.internetbanking.controller.dto.DeviceResponse;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsDTO;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsResponse;
+import com.kakaopay.homework.internetbanking.service.DeviceService;
+import com.kakaopay.homework.internetbanking.service.StatisticsService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +21,13 @@ import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class InternetBankingStatisticsApplicationTests {
+public class StatisticsSummaryApplicationTests {
 
     @Autowired
-    private InternetBankingStatisticsService internetBankingStatisticsService;
+    private StatisticsService statisticsService;
 
-    private RawDataParser rawDataParser = new RawDataParser();
-    private RawData rawData = null;
+    @Autowired
+    private DeviceService deviceService;
 
     @Before
     public void init () {
@@ -36,12 +37,7 @@ public class InternetBankingStatisticsApplicationTests {
             File dataFile = resource.getFile();
             Assert.assertTrue(dataFile.exists());
 
-            rawData = rawDataParser.parse(dataFile.getAbsolutePath());
-
-            Assert.assertNotNull(rawData);
-
-            Assert.assertTrue(rawData.getHeader().size() == 7);
-            Assert.assertTrue(rawData.getRows().size() == 8);
+            statisticsService.loadData();
         }
         catch (Exception e) {
             Assert.assertTrue(false);
@@ -50,34 +46,30 @@ public class InternetBankingStatisticsApplicationTests {
 
     @Test
     public void testGetDevices () {
-        DeviceStatisticsResponse response = internetBankingStatisticsService.getDevices();
+        DeviceResponse response = deviceService.getDevices();
         Assert.assertNotNull(response);
 
-        List<DeviceStatisticsDTO> list = response.getDeviceStatisticsList();
+        List<DeviceDTO> list = response.getDeviceList();
         Assert.assertNotNull(list);
         Assert.assertTrue(list.size() == 5);
 
         Assert.assertTrue(list.stream()
-                .filter(deviceStatisticsDTO -> rawData.getHeader().contains(deviceStatisticsDTO.getDeviceName()))
-                .count() == rawData.getHeader().size() - 2);
-
-        Assert.assertTrue(list.stream()
-                .filter(deviceStatisticsDTO -> deviceStatisticsDTO.getDeviceId() != null)
+                .filter(deviceDTO -> deviceDTO.getDeviceId() != null)
                 .count() == list.size());
 
         Assert.assertTrue(list.stream()
-                .map(deviceStatisticsDTO -> deviceStatisticsDTO.getDeviceId())
+                .map(deviceDTO -> deviceDTO.getDeviceId())
                 .collect(Collectors.toSet()).stream()
                 .count() == list.size());
     }
 
     @Test
     public void testGetYearlyDeviceStatistics () {
-        DeviceStatisticsResponse response = internetBankingStatisticsService.getYearlyDeviceStatistics();
+        StatisticsResponse response = statisticsService.getYearlyDeviceStatistics();
 
         Assert.assertNotNull(response);
 
-        List<DeviceStatisticsDTO> list = response.getDeviceStatisticsList();
+        List<StatisticsDTO> list = response.getDeviceStatisticsList();
         Assert.assertNotNull(list);
         Assert.assertTrue(list.size() == 8);
     }

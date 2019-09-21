@@ -2,7 +2,7 @@ package com.kakaopay.homework.internetbanking.service;
 
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceDTO;
 import com.kakaopay.homework.internetbanking.controller.dto.DeviceResponse;
-import com.kakaopay.homework.internetbanking.repository.DeviceInformationRepository;
+import com.kakaopay.homework.internetbanking.repository.DeviceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class DeviceService {
 
     @Autowired
-    private DeviceInformationRepository deviceInformationRepository;
+    private DeviceRepository deviceRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -26,7 +26,7 @@ public class DeviceService {
     public DeviceResponse getDevices () {
         DeviceResponse response = new DeviceResponse();
 
-        response.setDeviceList(deviceInformationRepository.findAll().stream()
+        response.setDeviceList(deviceRepository.findAll().stream()
                 .map(deviceInformation -> modelMapper.map(deviceInformation, DeviceDTO.class))
                 .collect(Collectors.toCollection(ArrayList::new)));
 

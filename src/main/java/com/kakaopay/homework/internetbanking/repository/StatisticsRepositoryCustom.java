@@ -1,13 +1,13 @@
 package com.kakaopay.homework.internetbanking.repository;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsDTO;
 
 import java.util.List;
 
 public interface StatisticsRepositoryCustom {
-    List<DeviceStatisticsDTO> getMaxRateStat ();
+    List<StatisticsDTO> getMaxRateStat ();
 
-    DeviceStatisticsDTO getMaxRateStatByYear (short year);
+    StatisticsDTO getMaxRateStatByYear (short year);
 
-    DeviceStatisticsDTO getMaxRateYearByDevice (String deviceId);
+    StatisticsDTO getMaxRateYearByDevice (String deviceId);
 }

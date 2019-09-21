@@ -1,7 +1,7 @@
 package com.kakaopay.homework.internetbanking.controller;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsResponse;
-import com.kakaopay.homework.internetbanking.service.InternetBankingStatisticsService;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsResponse;
+import com.kakaopay.homework.internetbanking.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
-public class InternetBankingStatisticsController {
+public class StatisticsController {
 
     @Autowired
-    private InternetBankingStatisticsService internetBankingStatisticsService;
+    private StatisticsService statisticsService;
 
     @PostMapping(
             value = "/load"
     )
     public ResponseEntity<?> loadData () {
-        internetBankingStatisticsService.loadData();
+        statisticsService.loadData();
         return ResponseEntity.ok().build();
     }
 
@@ -26,23 +26,23 @@ public class InternetBankingStatisticsController {
             value = "/device/yearly",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public DeviceStatisticsResponse getDeviceStatistics () {
-            return internetBankingStatisticsService.getYearlyDeviceStatistics();
+    public StatisticsResponse getDeviceStatistics () {
+            return statisticsService.getYearlyDeviceStatistics();
     }
 
     @GetMapping(
             value = "/device/yearly/{year}",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public DeviceStatisticsResponse getDeviceStatistics (@PathVariable(value="year") Short year) {
-        return internetBankingStatisticsService.getDeviceStatisticsByYear(year);
+    public StatisticsResponse getDeviceStatistics (@PathVariable(value="year") Short year) {
+        return statisticsService.getDeviceStatisticsByYear(year);
     }
 
     @GetMapping(
             value = "/device/maxrateyear",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public DeviceStatisticsResponse getMaxRateYear (@RequestParam(value="device_id") String deviceId) {
-        return internetBankingStatisticsService.getMaxRateYear(deviceId);
+    public StatisticsResponse getMaxRateYear (@RequestParam(value="device_id") String deviceId) {
+        return statisticsService.getMaxRateYear(deviceId);
     }
 }

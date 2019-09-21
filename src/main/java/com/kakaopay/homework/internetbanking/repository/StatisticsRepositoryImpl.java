@@ -1,6 +1,6 @@
 package com.kakaopay.homework.internetbanking.repository;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,7 +28,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "               ) AS ibsg ON ibsg.parent_id = ibs.uid " +
             "       ) AS ibr " +
             "  JOIN internet_banking_stat_detail AS ibsd ON ibsd.uid = ibr.detail_id " +
-            "  JOIN device_info AS di ON di.uid = ibsd.device_id";
+            "  JOIN device AS di ON di.uid = ibsd.device_id";
 
     private static final String MAX_RATE_YEAR_BY_DEVICE_QUERY =
             "SELECT ibsd.uid AS uid, di.device_id AS device_id, di.device_name AS device_name, ibs.year AS year, ibsdg.rate AS rate "+
@@ -38,7 +38,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "          FROM internet_banking_stat_detail " +
             "         group by device_id " +
             "       ) ibsdg on ibsd.device_id = ibsdg.device_id and ibsd.rate = ibsdg.rate " +
-            "  JOIN device_info di on di.uid= ibsd.device_id " +
+            "  JOIN device di on di.uid= ibsd.device_id " +
             "  JOIN internet_banking_stat ibs on ibsd.internet_banking_stat_uid = ibs.uid " +
             " WHERE di.device_id = :deviceId  ";
 
@@ -46,14 +46,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<DeviceStatisticsDTO> getMaxRateStat () {
+    public List<StatisticsDTO> getMaxRateStat () {
         Query query = entityManager.createNativeQuery(MAX_RATE_STAT_QUERY, "deviceStatisticsMapper");
 
         return query.getResultList();
     }
 
     @Override
-    public DeviceStatisticsDTO getMaxRateStatByYear (short year) {
+    public StatisticsDTO getMaxRateStatByYear (short year) {
         StringBuilder builder = new StringBuilder(MAX_RATE_STAT_QUERY);
 
         builder.append(" WHERE YEAR = :year");
@@ -61,18 +61,18 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
         Query query = entityManager.createNativeQuery(builder.toString(), "deviceStatisticsMapper");
         query.setParameter("year", year);
 
-        List<DeviceStatisticsDTO> list = query.getResultList();
+        List<StatisticsDTO> list = query.getResultList();
 
         return list.size() == 0 ? null : list.get(0);
     }
 
     @Override
-    public DeviceStatisticsDTO getMaxRateYearByDevice(String deviceId) {
+    public StatisticsDTO getMaxRateYearByDevice(String deviceId) {
         Query query = entityManager.createNativeQuery(MAX_RATE_YEAR_BY_DEVICE_QUERY, "deviceStatisticsMapper");
 
         query.setParameter("deviceId", deviceId);
 
-        List<DeviceStatisticsDTO> list = query.getResultList();
+        List<StatisticsDTO> list = query.getResultList();
 
         return list.size() == 0 ? null : list.get(0);
     }

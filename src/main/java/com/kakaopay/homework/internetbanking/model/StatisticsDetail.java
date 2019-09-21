@@ -13,10 +13,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class StatisticsDetail {
 
-    public StatisticsDetail (double rate, StatisticsSummary summary, DeviceInformation deviceInformation) {
+    public StatisticsDetail (double rate, StatisticsSummary summary, Device device) {
         this.rate = rate;
         this.parent = summary;
-        this.deviceInformation = deviceInformation;
+        this.device = device;
     }
 
     @Column(name = "uid")
@@ -33,5 +33,5 @@ public class StatisticsDetail {
 
     @ManyToOne
     @JoinColumn(name = "device_id")
-    private DeviceInformation deviceInformation;
+    private Device device;
 }

@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(
-        name = "device_info"
+        name = "device"
 )
-public class DeviceInformation {
+public class Device {
 
-    public DeviceInformation (String deviceId, String deviceName) {
+    public Device(String deviceId, String deviceName) {
         this.deviceId = deviceId;
         this.deviceName = deviceName;
     }
@@ -32,7 +32,7 @@ public class DeviceInformation {
     private String deviceName;
 
     @OneToMany(
-            mappedBy = "deviceInformation",
+            mappedBy = "device",
             cascade = CascadeType.ALL
     )
     private List<StatisticsDetail> statisticsDetails = new ArrayList<>();

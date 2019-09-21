@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class DeviceStatisticsDTO {
+public class StatisticsDTO {
 
-    public DeviceStatisticsDTO(String deviceName, short year, double rate) {
+    public StatisticsDTO(String deviceName, short year, double rate) {
         this.deviceName = deviceName;
         this.year = year;
         this.rate = rate;

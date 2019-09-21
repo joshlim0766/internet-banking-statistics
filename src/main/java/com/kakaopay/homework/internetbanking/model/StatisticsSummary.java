@@ -1,6 +1,6 @@
 package com.kakaopay.homework.internetbanking.model;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceStatisticsDTO;
+import com.kakaopay.homework.internetbanking.controller.dto.StatisticsDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +17,7 @@ import java.util.List;
         name = "deviceStatisticsMapper",
         classes = {
                 @ConstructorResult(
-                        targetClass = DeviceStatisticsDTO.class,
+                        targetClass = StatisticsDTO.class,
                         columns = {
                                 @ColumnResult(name = "device_name", type = String.class),
                                 @ColumnResult(name = "year", type = Short.class),
