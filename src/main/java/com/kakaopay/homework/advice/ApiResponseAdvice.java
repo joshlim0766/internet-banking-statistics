@@ -55,20 +55,4 @@ public class ApiResponseAdvice {
 
         return new ApiErrorResponse(e.getMessage());
     }
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiErrorResponse handleUnauthorizaed (final Exception e) {
-        log.warn(e.getMessage(), e);
-
-        return new ApiErrorResponse(e.getMessage());
-    }
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ApiErrorResponse handleForbidden (final Exception e) {
-        log.warn(e.getMessage(), e);
-
-        return new ApiErrorResponse(e.getMessage());
-    }
 }

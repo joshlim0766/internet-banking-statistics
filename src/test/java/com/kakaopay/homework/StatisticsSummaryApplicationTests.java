@@ -146,7 +146,7 @@ public class StatisticsSummaryApplicationTests {
 
     @Test
     public void testGetYearlyDeviceStatistics () {
-        StatisticsResponse response = statisticsService.getYearlyDeviceStatistics();
+        StatisticsResponse response = statisticsService.getFirstRankDevices();
 
         Assert.assertNotNull(response);
 
@@ -176,14 +176,14 @@ public class StatisticsSummaryApplicationTests {
         LinkedHashMap<Short, LinkedHashMap<String, Double>> rateMap = loadRatePerDevice();
 
         try {
-            statisticsService.getDeviceStatisticsByYear((short) -1500);
-            statisticsService.getDeviceStatisticsByYear((short) 4000);
+            statisticsService.getFirstRankDevice((short) -1500);
+            statisticsService.getFirstRankDevice((short) 4000);
         }
         catch (Exception e) {
             Assert.assertTrue(true);
         }
 
-        rateMap.keySet().stream().map(year -> statisticsService.getDeviceStatisticsByYear(year)).forEach(response -> {
+        rateMap.keySet().stream().map(year -> statisticsService.getFirstRankDevice(year)).forEach(response -> {
             Assert.assertNotNull(response);
 
             StatisticsDTO dto = response.getStatisticsDTO();
@@ -210,7 +210,7 @@ public class StatisticsSummaryApplicationTests {
         LinkedHashMap<Short, LinkedHashMap<String, Double>> rateMap = loadRatePerDevice();
 
         try {
-            statisticsService.getMaxRateYear("1234");
+            statisticsService.getFirstRankYear("1234");
         }
         catch (Exception e) {
             Assert.assertTrue(true);
@@ -232,7 +232,7 @@ public class StatisticsSummaryApplicationTests {
         });
 
         maxRateMap.forEach((deviceId, maxRateEntry) -> {
-            StatisticsResponse response = statisticsService.getMaxRateYear(deviceId);
+            StatisticsResponse response = statisticsService.getFirstRankYear(deviceId);
 
             Assert.assertNotNull(response);
 
