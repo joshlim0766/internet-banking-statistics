@@ -62,8 +62,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                     .antMatchers("/").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/api/v1/user/login").permitAll()
-                    .antMatchers("/api/v1/user/signup").permitAll()
+                    .antMatchers("/api/v1/user/**").permitAll()
+                    .antMatchers("/api/v1/devices/**").hasAnyRole("ADMIN", "USER")
+                    .antMatchers("/api/v1/token/**").hasAnyRole("ADMIN", "USER")
                     .antMatchers("/api/v1/statistics/**").hasAnyRole("ADMIN", "USER");
     }
 

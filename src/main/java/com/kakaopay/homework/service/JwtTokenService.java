@@ -1,6 +1,7 @@
 package com.kakaopay.homework.service;
 
 import com.kakaopay.homework.controller.dto.RefreshTokenResponse;
+import com.kakaopay.homework.exception.InvalidTokenException;
 import com.kakaopay.homework.model.RefreshToken;
 import com.kakaopay.homework.model.User;
 import com.kakaopay.homework.repository.RefreshTokenRespository;
@@ -88,7 +89,7 @@ public class JwtTokenService {
     public RefreshTokenResponse refreshAccessToken (String token) {
         String[] arr = token.split(" ");
         if (arr == null || arr.length < 2) {
-            throw new RuntimeException("Invalid authorization token");
+            throw new InvalidTokenException("Invalid authorization token");
         }
 
         token = arr[1];
@@ -96,17 +97,17 @@ public class JwtTokenService {
         try {
             OAuth2AccessToken accessToken = tokenService.readAccessToken(token);
             if (accessToken == null) {
-                throw new RuntimeException("Couldn't read access token");
+                throw new InvalidTokenException("Couldn't read access token");
             }
 
             OAuth2Authentication oauth2Authentication = tokenService.loadAuthentication(token);
             if (oauth2Authentication == null) {
-                throw new RuntimeException("Couldn't load authentication from access token.");
+                throw new InvalidTokenException("Couldn't load authentication from access token.");
             }
 
             Authentication authentication = oauth2Authentication.getUserAuthentication();
             if (authentication == null) {
-                throw new RuntimeException("Couldn't get user authentication from OAuth2 authentication.");
+                throw new InvalidTokenException("Couldn't get user authentication from OAuth2 authentication.");
             }
 
             String userName = authentication.getName();
@@ -119,24 +120,24 @@ public class JwtTokenService {
 
             User user = userRepository.findByUserName(userName);
             if (user == null) {
-                throw new RuntimeException("Couldn't find user(" + userName + ")");
+                throw new InvalidTokenException("Couldn't find user(" + userName + ")");
             }
 
             RefreshToken refreshToken = refreshTokenRespository.findRefreshTokenByUser(user);
             if (refreshToken == null) {
-                throw new RuntimeException("Couldn't find refresh token");
+                throw new InvalidTokenException("Couldn't find refresh token");
             }
 
             accessToken = tokenService.refreshAccessToken(refreshToken.getRefreshToken(), tokenRequest);
             if (accessToken == null) {
                 token = accessToken.getValue();
-                throw new RuntimeException("Couldn't refresh access token");
+                throw new InvalidTokenException("Couldn't refresh access token");
             }
 
             accessToken = accessTokenConverter.enhance(accessToken, oauth2Authentication);
             if (accessToken == null) {
                 token = accessToken.getValue();
-                throw new RuntimeException("Couldn't enhance access token");
+                throw new InvalidTokenException("Couldn't enhance access token");
             }
 
             RefreshTokenResponse response = new RefreshTokenResponse();
@@ -145,7 +146,7 @@ public class JwtTokenService {
 
             return response;
         }
-        catch (RuntimeException re) {
+        catch (InvalidTokenException re) {
             tokenService.revokeToken(token);
             throw re;
         }

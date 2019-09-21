@@ -2,6 +2,8 @@ package com.kakaopay.homework.service;
 
 import com.kakaopay.homework.controller.dto.LoginResponse;
 import com.kakaopay.homework.controller.dto.SingupResponse;
+import com.kakaopay.homework.exception.UserAlreadyExistException;
+import com.kakaopay.homework.exception.UserNotFoundException;
 import com.kakaopay.homework.model.RefreshToken;
 import com.kakaopay.homework.model.User;
 import com.kakaopay.homework.repository.RefreshTokenRespository;
@@ -42,7 +44,7 @@ public class UserService {
         String userName = signupInformation.getFirst("user_name");
 
         if (userRepository.countByUserName(userName) != 0) {
-            throw new RuntimeException("User(" + userName + ") already exists.");
+            throw new UserAlreadyExistException("User(" + userName + ") already exists.");
         }
 
         String password = signupInformation.getFirst("password");
@@ -97,7 +99,7 @@ public class UserService {
         User user = userRepository.findByUserName(userName);
         if (user == null) {
             refreshTokenRespository.deleteRefreshTokenByUser(user);
-            throw new RuntimeException("Couldn't find user(" + userName + ")");
+            throw new UserNotFoundException("Couldn't find user(" + userName + ")");
         }
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userName, password,

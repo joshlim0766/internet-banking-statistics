@@ -1,5 +1,6 @@
 package com.kakaopay.homework.service;
 
+import com.kakaopay.homework.exception.ContentNotFoundException;
 import com.kakaopay.homework.exception.CsvParseException;
 import com.kakaopay.homework.controller.dto.StatisticsDTO;
 import com.kakaopay.homework.controller.dto.StatisticsResponse;
@@ -127,7 +128,7 @@ public class StatisticsService {
 
         StatisticsDTO dto = statisticsRepository.getMaxRateStatByYear(year);
         if (dto == null) {
-            throw new RuntimeException("Not found statistics for " + year);
+            throw new ContentNotFoundException("Not found statistics for " + year);
         }
 
         response.setStatisticsDTO(dto);
@@ -142,7 +143,7 @@ public class StatisticsService {
 
         StatisticsDTO dto = statisticsRepository.getMaxRateYearByDevice(deviceId);
         if (dto == null) {
-            throw new RuntimeException("Device(" + deviceId + ") not found.");
+            throw new ContentNotFoundException("Device(" + deviceId + ") not found.");
         }
 
         response.setStatisticsDTO(dto);

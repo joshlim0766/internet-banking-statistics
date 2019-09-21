@@ -19,7 +19,7 @@ public class StatisticsController {
     )
     public ResponseEntity<?> loadData () {
         statisticsService.loadData();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("{\"result\" : \"success\"}");
     }
 
     @GetMapping(
