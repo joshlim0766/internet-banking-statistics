@@ -1,15 +1,14 @@
 package com.kakaopay.homework;
 
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceDTO;
-import com.kakaopay.homework.internetbanking.controller.dto.DeviceResponse;
-import com.kakaopay.homework.internetbanking.controller.dto.StatisticsDTO;
-import com.kakaopay.homework.internetbanking.controller.dto.StatisticsResponse;
-import com.kakaopay.homework.internetbanking.model.Device;
-import com.kakaopay.homework.internetbanking.repository.DeviceRepository;
-import com.kakaopay.homework.internetbanking.service.DeviceService;
-import com.kakaopay.homework.internetbanking.service.StatisticsService;
-import com.kakaopay.homework.internetbanking.utility.DeviceIdGenerator;
-import com.kakaopay.homework.internetbanking.utility.RawStatisticsDataParser;
+import com.kakaopay.homework.controller.dto.DeviceDTO;
+import com.kakaopay.homework.controller.dto.DeviceResponse;
+import com.kakaopay.homework.controller.dto.StatisticsDTO;
+import com.kakaopay.homework.controller.dto.StatisticsResponse;
+import com.kakaopay.homework.repository.DeviceRepository;
+import com.kakaopay.homework.service.DeviceService;
+import com.kakaopay.homework.service.StatisticsService;
+import com.kakaopay.homework.utility.DeviceIdGenerator;
+import com.kakaopay.homework.utility.RawStatisticsDataParser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +62,6 @@ public class StatisticsSummaryApplicationTests {
         ClassPathResource resource = new ClassPathResource("data.csv");
 
         List<String> deviceNameList = new ArrayList<>();
-        List<Double> rateList = new ArrayList<>();
         LinkedHashMap<Short, LinkedHashMap<String, Double>> rateMap = new LinkedHashMap<>();
 
         try {
@@ -132,6 +130,7 @@ public class StatisticsSummaryApplicationTests {
         Assert.assertNotNull(response);
 
         List<DeviceDTO> list = response.getDeviceList();
+
         Assert.assertNotNull(list);
         Assert.assertTrue(list.size() == 5);
 
