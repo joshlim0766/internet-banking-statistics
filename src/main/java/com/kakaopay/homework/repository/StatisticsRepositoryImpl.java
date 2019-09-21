@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
 
-    private static final String MAX_RATE_STAT_QUERY =
+    private static final String FIRST_RANK_STATISTICS_QUERY =
             "SELECT ibsd.uid AS uid, di.device_id AS device_id, di.device_name AS device_name, ibr.year AS year, ibr.rate AS rate "+
             "  FROM " +
             "       ( "+
@@ -30,7 +30,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "  JOIN internet_banking_stat_detail AS ibsd ON ibsd.uid = ibr.detail_id " +
             "  JOIN device AS di ON di.uid = ibsd.device_id";
 
-    private static final String MAX_RATE_YEAR_BY_DEVICE_QUERY =
+    private static final String DEVICE_FIRST_RANK_YEAR_QUERY =
             "SELECT ibsd.uid AS uid, di.device_id AS device_id, di.device_name AS device_name, ibs.year AS year, ibsdg.rate AS rate "+
             "  FROM internet_banking_stat_detail ibsd "+
             "  JOIN ( " +
@@ -46,15 +46,15 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<StatisticsDTO> getMaxRateStat () {
-        Query query = entityManager.createNativeQuery(MAX_RATE_STAT_QUERY, "deviceStatisticsMapper");
+    public List<StatisticsDTO> getFirstRankDevices () {
+        Query query = entityManager.createNativeQuery(FIRST_RANK_STATISTICS_QUERY, "deviceStatisticsMapper");
 
         return query.getResultList();
     }
 
     @Override
-    public StatisticsDTO getMaxRateStatByYear (short year) {
-        StringBuilder builder = new StringBuilder(MAX_RATE_STAT_QUERY);
+    public StatisticsDTO getFirstRankDevice (short year) {
+        StringBuilder builder = new StringBuilder(FIRST_RANK_STATISTICS_QUERY);
 
         builder.append(" WHERE YEAR = :year");
 
@@ -67,8 +67,8 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
     }
 
     @Override
-    public StatisticsDTO getMaxRateYearByDevice(String deviceId) {
-        Query query = entityManager.createNativeQuery(MAX_RATE_YEAR_BY_DEVICE_QUERY, "deviceStatisticsMapper");
+    public StatisticsDTO getFirstRankYear (String deviceId) {
+        Query query = entityManager.createNativeQuery(DEVICE_FIRST_RANK_YEAR_QUERY, "deviceStatisticsMapper");
 
         query.setParameter("deviceId", deviceId);
 

@@ -111,11 +111,11 @@ public class StatisticsService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getYearlyDeviceStatistics'")
-    public StatisticsResponse getYearlyDeviceStatistics () {
+    @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getFirstRankDevices'")
+    public StatisticsResponse getFirstRankDevices () {
         StatisticsResponse response = new StatisticsResponse();
 
-        response.setDeviceStatisticsList(statisticsRepository.getMaxRateStat().stream()
+        response.setDeviceStatisticsList(statisticsRepository.getFirstRankDevices().stream()
                 .collect(Collectors.toCollection(ArrayList::new)));
 
         return response;
@@ -123,10 +123,10 @@ public class StatisticsService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "localCache", key = "#year")
-    public StatisticsResponse getDeviceStatisticsByYear (Short year) {
+    public StatisticsResponse getFirstRankDevice (Short year) {
         StatisticsResponse response = new StatisticsResponse();
 
-        StatisticsDTO dto = statisticsRepository.getMaxRateStatByYear(year);
+        StatisticsDTO dto = statisticsRepository.getFirstRankDevice(year);
         if (dto == null) {
             throw new ContentNotFoundException("Not found statistics for " + year);
         }
@@ -138,10 +138,10 @@ public class StatisticsService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "localCache", key = "#deviceId")
-    public StatisticsResponse getMaxRateYear (String deviceId) {
+    public StatisticsResponse getFirstRankYear(String deviceId) {
         StatisticsResponse response = new StatisticsResponse();
 
-        StatisticsDTO dto = statisticsRepository.getMaxRateYearByDevice(deviceId);
+        StatisticsDTO dto = statisticsRepository.getFirstRankYear(deviceId);
         if (dto == null) {
             throw new ContentNotFoundException("Device(" + deviceId + ") not found.");
         }

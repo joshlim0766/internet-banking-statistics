@@ -5,9 +5,9 @@ import com.kakaopay.homework.controller.dto.StatisticsDTO;
 import java.util.List;
 
 public interface StatisticsRepositoryCustom {
-    List<StatisticsDTO> getMaxRateStat ();
+    List<StatisticsDTO> getFirstRankDevices ();
 
-    StatisticsDTO getMaxRateStatByYear (short year);
+    StatisticsDTO getFirstRankDevice (short year);
 
-    StatisticsDTO getMaxRateYearByDevice (String deviceId);
+    StatisticsDTO getFirstRankYear (String deviceId);
 }

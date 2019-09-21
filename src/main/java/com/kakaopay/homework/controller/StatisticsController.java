@@ -23,26 +23,26 @@ public class StatisticsController {
     }
 
     @GetMapping(
-            value = "/device/yearly",
+            value = "/devices/first_rank",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public StatisticsResponse getDeviceStatistics () {
-            return statisticsService.getYearlyDeviceStatistics();
+    public StatisticsResponse getFirstRankDevices () {
+            return statisticsService.getFirstRankDevices();
     }
 
     @GetMapping(
-            value = "/device/yearly/{year}",
+            value = "/{year}/devices/first_rank",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public StatisticsResponse getDeviceStatistics (@PathVariable(value="year") Short year) {
-        return statisticsService.getDeviceStatisticsByYear(year);
+    public StatisticsResponse getFirstRankDevice (@PathVariable(value="year") Short year) {
+        return statisticsService.getFirstRankDevice(year);
     }
 
     @GetMapping(
-            value = "/device/maxrateyear",
+            value = "/devices/{device_id}/first_rank_year",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public StatisticsResponse getMaxRateYear (@RequestParam(value="device_id") String deviceId) {
-        return statisticsService.getMaxRateYear(deviceId);
+    public StatisticsResponse getFirstRankYear(@PathVariable(value="device_id") String deviceId) {
+        return statisticsService.getFirstRankYear(deviceId);
     }
 }
