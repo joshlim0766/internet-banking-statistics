@@ -10,7 +10,7 @@ import java.util.List;
 public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
 
     private static final String FIRST_RANK_STATISTICS_QUERY =
-            "SELECT d.device_id AS device_id, d.device_name AS device_name, ibs.year AS year, ibsd.rate AS rate " +
+            "SELECT d.device_id AS device_id, d.device_name AS device_name, ibs.year AS year, ibsd.rate AS rate, NULL as overall_rate " +
             "  FROM internet_banking_stat_detail ibsd " +
             "  JOIN device d ON d.uid = ibsd.device_id " +
             "  JOIN internet_banking_stat ibs ON ibs.uid = ibsd.internet_banking_stat_uid " +
@@ -21,7 +21,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "                    )";
 
     private static final String DEVICE_FIRST_RANK_YEAR_QUERY =
-            "SELECT d.device_id AS device_id, d.device_name AS device_name, ibs.year AS year, ibsd.rate AS rate " +
+            "SELECT d.device_id AS device_id, d.device_name AS device_name, ibs.year AS year, ibsd.rate AS rate, NULL as overall_rate" +
             "  FROM internet_banking_stat_detail ibsd " +
             "  JOIN device d ON d.uid = ibsd.device_id " +
             "  JOIN internet_banking_stat ibs ON ibs.uid = ibsd.internet_banking_stat_uid " +
@@ -33,7 +33,7 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "                    )";
 
     private static final String FETCH_FORECAST_SOURCE_QUERY =
-            "SELECT ibs.year AS year, d.device_name AS device_name, ibsd.rate AS rate " +
+            "SELECT ibs.year AS year, d.device_name AS device_name, ibsd.rate AS rate, ibs.rate AS overall_rate " +
             "  FROM internet_banking_stat_detail ibsd " +
             "  JOIN device d ON ibsd.device_id = d.uid " +
             "  JOIN internet_banking_stat ibs ON ibs.uid = ibsd.internet_banking_stat_uid " +

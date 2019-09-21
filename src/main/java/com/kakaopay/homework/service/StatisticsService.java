@@ -160,9 +160,21 @@ public class StatisticsService {
             throw new ContentNotFoundException("Not found forecast sources for device(" + forecastRequest.getDeviceId() + ")");
         }
 
+        int population = 10000000;
+
+        double[] populations = forecastSources
+                .stream()
+                .mapToDouble(dto -> (dto.getOverallRate() / 100 * population)).toArray();
+        DoubleExponentialSmoothingForLinearSeries.Model populationModel =
+                DoubleExponentialSmoothingForLinearSeries.fit(populations, 0.995, 0.8);
+        double[] populationForcsated = populationModel.forecast(1);
+        if (populationForcsated == null || populationForcsated.length < 1) {
+            throw new RuntimeException("Couldn't forecast.");
+        }
+
         double[] datas = forecastSources
                 .stream()
-                .mapToDouble(dto -> dto.getRate()).toArray();
+                .mapToDouble(dto -> (dto.getOverallRate() / 100 * population) * (dto.getRate() / 100)).toArray();
 
         DoubleExponentialSmoothingForLinearSeries.Model model =
                 DoubleExponentialSmoothingForLinearSeries.fit(datas, 0.995, 0.8);
@@ -174,7 +186,7 @@ public class StatisticsService {
         StatisticsDTO statisticsDTO = new StatisticsDTO();
         statisticsDTO.setYear((short) 2019);
         statisticsDTO.setDeviceName(forecastSources.get(0).getDeviceName());
-        statisticsDTO.setRate(forecasted[0]);
+        statisticsDTO.setRate(Math.round((forecasted[0] / populationForcsated[0] * 1000)) / 10.0);
 
         StatisticsResponse response = new StatisticsResponse();
 

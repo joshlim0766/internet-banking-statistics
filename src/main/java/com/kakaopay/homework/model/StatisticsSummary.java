@@ -21,7 +21,8 @@ import java.util.List;
                         columns = {
                                 @ColumnResult(name = "device_name", type = String.class),
                                 @ColumnResult(name = "year", type = Short.class),
-                                @ColumnResult(name = "rate", type = Double.class)
+                                @ColumnResult(name = "rate", type = Double.class),
+                                @ColumnResult(name = "overall_rate", type = Double.class)
                         }
                 )
         }

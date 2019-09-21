@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatisticsDTO {
 
-    public StatisticsDTO(String deviceName, short year, double rate) {
+    public StatisticsDTO(String deviceName, short year, Double rate, Double overallRate) {
         this.deviceName = deviceName;
         this.year = year;
         this.rate = rate;
+        this.overallRate = overallRate;
     }
 
     @JsonProperty(value = "year")
@@ -26,4 +27,7 @@ public class StatisticsDTO {
 
     @JsonProperty(value = "rate")
     private Double rate;
+
+    @JsonProperty(value = "overall_rate")
+    private Double overallRate;
 }
