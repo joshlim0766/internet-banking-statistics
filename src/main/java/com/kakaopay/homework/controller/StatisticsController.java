@@ -1,5 +1,6 @@
 package com.kakaopay.homework.controller;
 
+import com.kakaopay.homework.controller.dto.ForecastRequest;
 import com.kakaopay.homework.controller.dto.StatisticsResponse;
 import com.kakaopay.homework.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,14 @@ public class StatisticsController {
     )
     public StatisticsResponse getFirstRankYear(@PathVariable(value="device_id") String deviceId) {
         return statisticsService.getFirstRankYear(deviceId);
+    }
+
+    @PostMapping(
+            value = "/devices/forecast",
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
+    )
+    public StatisticsResponse forecast (@RequestBody ForecastRequest forecastRequest) {
+        return statisticsService.forecast(forecastRequest);
     }
 }

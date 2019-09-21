@@ -10,4 +10,6 @@ public interface StatisticsRepositoryCustom {
     StatisticsDTO getFirstRankDevice (short year);
 
     StatisticsDTO getFirstRankYear (String deviceId);
+
+    List<StatisticsDTO> fetchForecastSources (String deviceId);
 }

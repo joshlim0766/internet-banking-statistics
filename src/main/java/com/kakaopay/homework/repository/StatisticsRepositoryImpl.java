@@ -32,6 +32,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
             "                      GROUP BY device_id " +
             "                    )";
 
+    private static final String FETCH_FORECAST_SOURCE_QUERY =
+            "SELECT ibs.year AS year, d.device_name AS device_name, ibsd.rate AS rate " +
+            "  FROM internet_banking_stat_detail ibsd " +
+            "  JOIN device d ON ibsd.device_id = d.uid " +
+            "  JOIN internet_banking_stat ibs ON ibs.uid = ibsd.internet_banking_stat_uid " +
+            " WHERE d.device_id = :device_id " +
+            " ORDER BY ibs.year ASC";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -65,5 +73,14 @@ public class StatisticsRepositoryImpl implements StatisticsRepositoryCustom {
         List<StatisticsDTO> list = query.getResultList();
 
         return list.size() == 0 ? null : list.get(0);
+    }
+
+    @Override
+    public List<StatisticsDTO> fetchForecastSources (String deviceId) {
+        Query query = entityManager.createNativeQuery(FETCH_FORECAST_SOURCE_QUERY, "deviceStatisticsMapper");
+
+        query.setParameter("device_id", deviceId);
+
+        return query.getResultList();
     }
 }

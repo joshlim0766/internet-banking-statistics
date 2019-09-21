@@ -1,5 +1,6 @@
 package com.kakaopay.homework.service;
 
+import com.kakaopay.homework.controller.dto.ForecastRequest;
 import com.kakaopay.homework.exception.ContentNotFoundException;
 import com.kakaopay.homework.exception.CsvParseException;
 import com.kakaopay.homework.controller.dto.StatisticsDTO;
@@ -11,6 +12,7 @@ import com.kakaopay.homework.repository.DeviceRepository;
 import com.kakaopay.homework.repository.StatisticsDetailRepository;
 import com.kakaopay.homework.repository.StatisticsRepository;
 import com.kakaopay.homework.utility.DeviceIdGenerator;
+import com.kakaopay.homework.utility.DoubleExponentialSmoothingForLinearSeries;
 import com.kakaopay.homework.utility.RawStatisticsDataParser;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -138,7 +140,7 @@ public class StatisticsService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "localCache", key = "#deviceId")
-    public StatisticsResponse getFirstRankYear(String deviceId) {
+    public StatisticsResponse getFirstRankYear (String deviceId) {
         StatisticsResponse response = new StatisticsResponse();
 
         StatisticsDTO dto = statisticsRepository.getFirstRankYear(deviceId);
@@ -147,6 +149,36 @@ public class StatisticsService {
         }
 
         response.setStatisticsDTO(dto);
+
+        return response;
+    }
+
+    @Transactional(readOnly = true)
+    public StatisticsResponse forecast (ForecastRequest forecastRequest) {
+        List<StatisticsDTO> forecastSources = statisticsRepository.fetchForecastSources(forecastRequest.getDeviceId());
+        if (forecastSources.size() <= 0) {
+            throw new ContentNotFoundException("Not found forecast sources for device(" + forecastRequest.getDeviceId() + ")");
+        }
+
+        double[] datas = forecastSources
+                .stream()
+                .mapToDouble(dto -> dto.getRate()).toArray();
+
+        DoubleExponentialSmoothingForLinearSeries.Model model =
+                DoubleExponentialSmoothingForLinearSeries.fit(datas, 0.995, 0.8);
+        double[] forecasted = model.forecast(1);
+        if (forecasted == null || forecasted.length < 1) {
+            throw new RuntimeException("Couldn't forecast.");
+        }
+
+        StatisticsDTO statisticsDTO = new StatisticsDTO();
+        statisticsDTO.setYear((short) 2019);
+        statisticsDTO.setDeviceName(forecastSources.get(0).getDeviceName());
+        statisticsDTO.setRate(forecasted[0]);
+
+        StatisticsResponse response = new StatisticsResponse();
+
+        response.setStatisticsDTO(statisticsDTO);
 
         return response;
     }
