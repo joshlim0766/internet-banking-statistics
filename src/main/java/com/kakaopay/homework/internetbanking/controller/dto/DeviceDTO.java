@@ -10,20 +10,10 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class DeviceStatisticsDTO {
-
-    public DeviceStatisticsDTO(String deviceName, short year, double rate) {
-        this.deviceName = deviceName;
-        this.year = year;
-        this.rate = rate;
-    }
-
-    @JsonProperty(value = "year")
-    private Short year;
+public class DeviceDTO {
+    @JsonProperty(value = "device_id")
+    private String deviceId;
 
     @JsonProperty(value = "device_name")
     private String deviceName;
-
-    @JsonProperty(value = "rate")
-    private Double rate;
 }

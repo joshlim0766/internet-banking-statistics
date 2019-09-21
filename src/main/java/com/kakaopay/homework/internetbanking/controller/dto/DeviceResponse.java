@@ -6,24 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class DeviceStatisticsDTO {
+public class DeviceResponse {
 
-    public DeviceStatisticsDTO(String deviceName, short year, double rate) {
-        this.deviceName = deviceName;
-        this.year = year;
-        this.rate = rate;
-    }
-
-    @JsonProperty(value = "year")
-    private Short year;
-
-    @JsonProperty(value = "device_name")
-    private String deviceName;
-
-    @JsonProperty(value = "rate")
-    private Double rate;
+    @JsonProperty(value = "devices")
+    private List<DeviceDTO> deviceList = null;
 }

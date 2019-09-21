@@ -110,28 +110,11 @@ public class InternetBankingStatisticsService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getDevices'")
-    public DeviceStatisticsResponse getDevices () {
-        DeviceStatisticsResponse response = new DeviceStatisticsResponse();
-
-        response.setDeviceStatisticsList(deviceInformationRepository.findAll().stream()
-                .map(deviceInformation -> modelMapper.map(deviceInformation, DeviceStatisticsDTO.class))
-                .collect(Collectors.toCollection(ArrayList::new)));
-
-        return response;
-    }
-
-    @Transactional(readOnly = true)
     @Cacheable(value = "localCache", key = "'InternetBankingStatisticsService.getYearlyDeviceStatistics'")
     public DeviceStatisticsResponse getYearlyDeviceStatistics () {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
         response.setDeviceStatisticsList(statisticsRepository.getMaxRateStat().stream()
-                .map(deviceStatisticsDTO -> {
-                    deviceStatisticsDTO.setDeviceId(null);
-
-                    return deviceStatisticsDTO;
-                })
                 .collect(Collectors.toCollection(ArrayList::new)));
 
         return response;
@@ -143,7 +126,9 @@ public class InternetBankingStatisticsService {
         DeviceStatisticsResponse response = new DeviceStatisticsResponse();
 
         DeviceStatisticsDTO dto = statisticsRepository.getMaxRateStatByYear(year);
-        dto.setDeviceId(null);
+        if (dto == null) {
+            throw new RuntimeException("Not found statistics for " + year);
+        }
 
         response.setDeviceStatisticsDTO(dto);
 
@@ -159,8 +144,6 @@ public class InternetBankingStatisticsService {
         if (dto == null) {
             throw new RuntimeException("Device(" + deviceId + ") not found.");
         }
-
-        dto.setDeviceId(null);
 
         response.setDeviceStatisticsDTO(dto);
 

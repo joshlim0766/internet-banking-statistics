@@ -19,8 +19,6 @@ import java.util.List;
                 @ConstructorResult(
                         targetClass = DeviceStatisticsDTO.class,
                         columns = {
-                                @ColumnResult(name = "uid", type = Integer.class),
-                                @ColumnResult(name = "device_id", type = String.class),
                                 @ColumnResult(name = "device_name", type = String.class),
                                 @ColumnResult(name = "year", type = Short.class),
                                 @ColumnResult(name = "rate", type = Double.class)

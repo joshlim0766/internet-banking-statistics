@@ -23,14 +23,6 @@ public class InternetBankingStatisticsController {
     }
 
     @GetMapping(
-            value = "/devices",
-            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
-    )
-    public DeviceStatisticsResponse getDevices () {
-        return internetBankingStatisticsService.getDevices();
-    }
-
-    @GetMapping(
             value = "/device/yearly",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
