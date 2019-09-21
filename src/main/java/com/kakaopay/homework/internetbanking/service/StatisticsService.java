@@ -70,7 +70,7 @@ public class StatisticsService {
         String regex = "[+-]?(\\d+|\\d+\\.\\d+|\\.\\d+|\\d+\\.)([eE]\\d+)?";
         List<Double> rates = IntStream.range(2, row.length)
                 .mapToObj(i -> row[i])
-                .map(value -> value.matches(regex) ? Double.valueOf(value) : 0.0f)
+                .map(value -> value.matches(regex) ? Double.valueOf(value) : 0.0d)
                 .collect(Collectors.toList());
 
         IntStream.range(0, rates.size())
