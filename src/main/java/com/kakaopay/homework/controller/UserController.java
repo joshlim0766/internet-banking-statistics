@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping(
-            value = "/login",
+            value = "/signin",
             consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE},
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )

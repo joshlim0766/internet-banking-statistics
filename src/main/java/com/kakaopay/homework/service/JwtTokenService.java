@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -85,7 +86,7 @@ public class JwtTokenService {
         return accessTokenConverter.enhance(accessToken, authentication);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public RefreshTokenResponse refreshAccessToken (String token) {
         String[] arr = token.split(" ");
         if (arr == null || arr.length < 2) {
@@ -139,6 +140,9 @@ public class JwtTokenService {
                 token = accessToken.getValue();
                 throw new InvalidTokenException("Couldn't enhance access token");
             }
+
+            refreshToken.setRefreshToken(accessToken.getRefreshToken().getValue());
+            refreshTokenRespository.saveAndFlush(refreshToken);
 
             RefreshTokenResponse response = new RefreshTokenResponse();
 
