@@ -2,6 +2,7 @@ package com.kakaopay.homework.service;
 
 import com.kakaopay.homework.controller.dto.LoginResponse;
 import com.kakaopay.homework.controller.dto.SingupResponse;
+import com.kakaopay.homework.exception.InvalidParameterException;
 import com.kakaopay.homework.exception.UserAlreadyExistException;
 import com.kakaopay.homework.exception.UserNotFoundException;
 import com.kakaopay.homework.model.RefreshToken;
@@ -42,12 +43,18 @@ public class UserService {
 
     protected User createUser (MultiValueMap<String, String> signupInformation) {
         String userName = signupInformation.getFirst("user_name");
+        if (userName == null) {
+            throw new InvalidParameterException("User name is null.");
+        }
 
         if (userRepository.countByUserName(userName) != 0) {
             throw new UserAlreadyExistException("User(" + userName + ") already exists.");
         }
 
         String password = signupInformation.getFirst("password");
+        if (password == null) {
+            throw new InvalidParameterException("User name is null.");
+        }
 
         User user = new User();
 
@@ -65,6 +72,9 @@ public class UserService {
     public SingupResponse signup (MultiValueMap<String, String> signupInformation) {
         User user = createUser(signupInformation);
         String clientId = signupInformation.getFirst("client_id");
+        if (clientId == null) {
+            throw new InvalidParameterException("clientId is null");
+        }
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword(),
@@ -95,6 +105,10 @@ public class UserService {
         String userName = loginInformation.getFirst("user_name");
         String password = loginInformation.getFirst("password");
         String clientId = loginInformation.getFirst("client_id");
+
+        if (userName == null || password == null || clientId == null) {
+            throw new InvalidParameterException("Input value is null");
+        }
 
         User user = userRepository.findByUserName(userName);
         if (user == null) {

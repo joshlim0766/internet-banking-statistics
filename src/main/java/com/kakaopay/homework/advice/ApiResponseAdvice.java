@@ -29,6 +29,7 @@ public class ApiResponseAdvice {
 
     @ExceptionHandler(
             value = {
+                    InvalidParameterException.class,
                     InvalidTokenException.class,
                     UserAlreadyExistException.class
             }

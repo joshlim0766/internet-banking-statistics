@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,13 +32,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure (WebSecurity webSecurity) {
         webSecurity
                 .ignoring()
-                .requestMatchers(PathRequest.toH2Console()); // TODO: Test Only
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers(PathRequest.toH2Console()) // TODO: Test Only
+                .antMatchers("/resources/**")
+                .antMatchers("/swagger-ui.html")
+                .antMatchers("/swagger/**")
+                .antMatchers("/swagger-resources/**")
+                .antMatchers("/webjar/**");
     }
 
     @Override
     protected void configure (HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .antMatchers("/oauth/**").denyAll();
+        httpSecurity
+                .httpBasic().disable()
+                .csrf().disable()
+                .formLogin().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                    .antMatchers("/oauth/**").denyAll();
 
         httpSecurity.headers().frameOptions().disable();
     }
