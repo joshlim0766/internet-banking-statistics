@@ -17,6 +17,11 @@ $ ./gradlew clean build
 $ ./startup.sh
 ```
 
+**API Document**
+```
+웹브라우저에서 http://${service_ip}:8080/swagger-ui.html로 접근 가능
+```
+
 ## 문제 해결 전략 
 #### API 설계
 ```
