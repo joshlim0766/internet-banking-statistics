@@ -22,6 +22,11 @@ $ ./startup.sh
 웹브라우저에서 http://${service_ip}:8080/swagger-ui.html로 접근 가능
 ```
 
+**Test Web Application**
+```
+웹브라우저에서 http://${server_ip}:8080/ 으로 접근 가능
+```
+
 ## 문제 해결 전략 
 #### API 설계
 ```
@@ -29,6 +34,13 @@ $ ./startup.sh
 1.1. CSV에서 자료를 읽어서 DB에 적재하는 API는 POST
 1.2. 다른 조회 API들은 GET
 1.3. 2019년 사용율 예측 API는 POST
+2. Unique Device ID 생성 전략
+2.1 DIS_0000000000의 형태로 ID를 생성하기로 함.
+2.2 Postfix의 10자리 생성을 위해 다음 과정을 10회 반복
+2.2.1 SHA1PRNG를 알고리즘으로 선택한 SecureRandom.nextLong으로 seed 생성
+2.2.2 Random.nextInt(10)으로 숫자 선택하여 Device ID에 concat
+2.3 문제에 나온 device id의 경우 문제 내용을 봐서는 device type id에 가까워서 저 정도로도 충분히 unique한 값을 보장해줄 수 있음.
+2.4 실제 사용자 기기의 id를 생성하는 경우 UUID를 이용하는 것을 고려해보아야 할 것 같음.
 ```
 #### DB 설계
 ```
@@ -42,7 +54,7 @@ $ ./startup.sh
 #### 사용율 예측 API
 ```
 1. 각종 예측 알고리즘 중 지수평활(Exponential Smoothing)을 선택
-1.1 시계열 예측에 적합한 모델로 생각되며 실제 기존 값을 바탕으로 한 예측 값을 구하는데 많이 사용되고 있음
+1.1 기존 값을 바탕으로 한 예측 값을 구하는데 많이 사용되고 있음
 1.2 주어진 자료는 연도별 자료이기에 추세까지 반영하는 Double Exponential Smoothing을 채택하기로 함
 2. 구현 전략
 2.1 https://geekprompt.github.io/Java-implementation-for-Double-Exponential-Smoothing-for-time-series-with-linear-trend/의 구현을 그대로 사용
@@ -58,19 +70,24 @@ $ ./startup.sh
 1. Spring Security에서 제공하는 oauth2 + jwt 구현을 이용하였음
 2. 토큰 발급, 갱신은 spring의 oauth2, jwt 관련 class를 이용하여 구현
 3. Refresh token 
-3.1 Refresh token 발급 정책은 토큰 발급시 서버의 DB에 저장하도록 함.
-3.2. refresh API가 호출되면 oauth, jwt 관련 class를 이용하여 access token을 재발급하고 새로운 refresh token을 DB에 저장
+3.1 Refresh token은 토큰 발급시 사용자에게 response에 포함시키고 서버의 DB에 저장하도록 함.
+3.2 refresh API는 Authorization header에는 access token을 request body에는 refresh token을 포함시켜 호출
+3.3 refresh API가 호출되면 access token 유효성 여부, refresh token이 서버에 저장되어 있는 것과 일치 여부를 검사
+3.4 oauth, jwt 관련 class를 이용하여 access token을 재발급하고 필요하다면 새로운 refresh token을 발급하여 DB에 저장
+3.5 refresh token 재발급 여부 및 재발급은 spring-security-oauth2의 DefaultTokenService class에서 판단하고 재발급함.
 4. Access token
 4.1 signin, signup을 제외한 모든 API는 authorization header에 토큰을 넣어야 접근 가능함
 5. Token 서명
-5.1 keytool을 이용하여 생성한 서버 인증서를 secret으로 이용하여 JWT의 signature를 서명하며 서버의 공개키를 이용하여 이를 복호화 하여 인증을 할 수 있도록 구성
+5.1 keytool을 이용하여 생성한 서버 인증서를 key store에 저장(server.jks)
+5.2 key stroe에 저장되어 있는 서버의 개인키를 secret으로 이용하여 JWT의 signature를 서명
+5.3 서버의 공개키를 이용하여 JWT의 signature를 복호화 하여 인증을 할 수 있도록 구성
 ```
 #### 대용량 서비스를 위한 전략
 ```
 1. EHCache 적용
-1.1 과제의 API 대부분이 한번 적재되면 변할 일이 거의 없는 데이터임
-1.2 이런 경우 Cache를 운영하면 매번 API 호출할 때마다 DBMS에 접근하지 않고 최초 한번만 DBMS에 접근 후 Cache가 살아 있는 한 계속 Cache를 이용하게 되므로 매우 효율적임
-1.3 실제 운영 상황에서도 DB 읽기가 80% 가량을 차지하는 경향을 보이므로 Read replica를 구성하고 Redis등으로 Cache 서버를 구성하는 구조를 채택하는 것을 생각해볼 수 있음.
+1.1 과제의 API의 결과는 대부분 한번 적재되면 변할 일이 거의 없는 데이터임
+1.2 이런 경우 Cache를 운영하면 매번 API 호출할 때마다 DBMS에 접근하지 않고 최초 요청 시 한번만 DBMS에 접근 후 Cache가 살아 있는 한 계속 Cache를 이용하게 되므로 매우 효율적임
+1.3 대부분의 운영 상황에서 DB 읽기가 80% 가량을 차지하는 경향을 보이므로 Read replica를 구성하고 Redis등으로 Cache 서버를 구성하는 구조를 채택하는 것을 생각해볼 수 있음.
 
 2. 서비스 분리
 2.1 현재 구현 같은 경우 API 서비스, 인증&인가 서비스가 함께 합쳐진 구조임
@@ -78,4 +95,5 @@ $ ./startup.sh
 2.3 실제 운영 상황을 가정해본다면 인증&인가 서비스는 다양한 다른 서비스들의 인증&인가를 담당하고 API 서비스는 자신의 역할만 담당하는 형태로 나뉘어서 구성되는 것이 효율적이라고 생각함
 2.4 서비스가 분리되면 서비스간의 API 호출과 같은 시나리오가 생길 수 있는데 이럴 때 Service Discovery와 같은 개념이 중요해짐
 2.4.1 Spring Cloud에 이러한 역할을 해주는 다양한 제품들이 존재함. (Eureka, Zuul, Ribbon, Etc)
+2.5 Static resource는 WAS가 아닌 Web Server에서 서비스 하도록 구성해야함.
 ```
