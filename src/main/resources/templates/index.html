@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<input type="hidden" id="client_id" name="client_id" th:value="${clientId}" />
+
+<!-- 가입/로그인 폼 -->
+<div class="container">
+    <div class="row">
+        <!-- 회원 가입 폼 -->
+        <div class="col">
+            <form id="signup" name="signup">
+                <div class="form-group">
+                    User name :
+                    <input type="text" class="form-control" id="signup_user_name" name="signup_user_name" />
+                </div>
+                <div class="form-group">
+                    Password :
+                    <input type="password" class="form-control input-group-sm" id="signup_password" name="signup_password" />
+                </div>
+                <div class="form-group">
+                    <br/>
+                    <button type="submit" class="btn btn-block btn-outline-success btn-sm">Sign Up</button>
+                </div>
+            </form>
+        </div>
+        <!-- 로그인 폼 -->
+        <div class="col" id="signin_form">
+            <form id="signin" name="signin">
+                <div class="form-group">
+                    User name :
+                    <input type="text" class="form-control" id="signin_user_name" name="signin_user_name" />
+                </div>
+                <div class="form-group">
+                    Password :
+                    <input type="password" class="form-control input-group-sm" id="signin_password" name="signin_password" />
+                </div>
+                <div class="form-group">
+                    <br/>
+                    <button type="submit" class="btn btn-block btn-outline-success btn-sm">Sign In</button>
+                </div>
+            </form>
+        </div>
+        <!-- 토큰 갱신 폼 -->
+        <div class="col" id="token_refresh_form" style="display: none">
+            <div class="form-group">
+                <br/>
+                <br/>
+                <br/>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="refresh_access_token"
+                        name="refresh_access_token">Refresh Access Token</button>
+            </div>
+            <div class="form-group">
+                <br/>
+                <br/>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- API 테스트 폼 -->
+<div class="container" id="api_test_form" name="api_test_form" style="display: none">
+    <div class="row">
+        <div class="col form-group">
+            <button type="button" class="btn btn-block btn-outline-success btn-sm" id="load_stat" name="load_stat">통계 자료 불러오기</button>
+        </div>
+        <div class="col form-group">
+            <button type="button" class="btn btn-block btn-outline-success btn-sm" id="get_device" name="get_device">인터넷 접속 기기 목록</button>
+        </div>
+        <div class="col form-group">
+            <button type="button" class="btn btn-block btn-outline-success btn-sm" id="get_first_rank_device" name="get_first_rank_device">연도별 최고 사용율 기기 목록</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col form-group">
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="get_first_rank_device_of_year" name="get_first_rank_device_of_year">특정 연도 최고 사용율 기기</button>
+            </div>
+            <div class="col form-group">
+                <input type="text" class="form-control" id="year_input" name="year_input" style="display:none" placeholder="연도를 입력하세요"/>
+            </div>
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="check1" style="display:none">확인</button>
+            </div>
+        </div>
+        <div class="col form-group">
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="get_first_rank_year_of_device" name="get_first_rank_year_of_device">특정 기기의 최고 사용율 연도</button>
+            </div>
+            <div class="col form-group">
+                <input type="text" class="form-control" id="device_id_input" name="device_id_input" style="display:none" placeholder="디바이스 아이디를 입력하세요"/>
+            </div>
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="check2" style="display:none">확인</button>
+            </div>
+        </div>
+        <div class="col form-group">
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="forecast" name="forecast">2019년 사용율 예측</button>
+            </div>
+            <div class="col form-group">
+                <input type="text" class="form-control" id="device_id_input2" name="device_id_input2" style="display:none" placeholder="디바이스 아이디를 입력하세요"/>
+            </div>
+            <div class="col form-group">
+                <button type="button" class="btn btn-block btn-outline-success btn-sm" id="check3" style="display:none">확인</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table id="result_table" class="table">
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/script/api.js}"></script>
+</body>
+</html>

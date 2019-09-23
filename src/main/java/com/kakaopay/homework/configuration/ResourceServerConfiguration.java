@@ -14,6 +14,10 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableResourceServer
@@ -54,7 +58,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         httpSecurity
                 .authorizeRequests()
                     .antMatchers("/").permitAll()
-                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .antMatchers("/api/v1/user/**").permitAll()
                     .antMatchers("/api/v1/devices/**").hasAnyRole("ADMIN", "USER")
                     .antMatchers("/api/v1/token/**").hasAnyRole("ADMIN", "USER")
@@ -64,6 +68,22 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure (ResourceServerSecurityConfigurer configurer) throws Exception {
         configurer.resourceId(resourceId);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
 

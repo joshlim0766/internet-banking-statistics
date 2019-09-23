@@ -96,6 +96,7 @@ public class UserService {
 
         response.setUserId(user.getUserName());
         response.setAccessToken(accessToken.getValue());
+        response.setRefreshToken(accessToken.getRefreshToken().getValue());
 
         return response;
     }
@@ -141,8 +142,8 @@ public class UserService {
 
         LoginResponse response = new LoginResponse();
 
-        response.setUserId(userName);
         response.setAccessToken(accessToken.getValue());
+        response.setRefreshToken(accessToken.getRefreshToken().getValue());
 
         return response;
     }

@@ -1,5 +1,7 @@
 package com.kakaopay.homework.service;
 
+import com.kakaopay.homework.annotation.Authorization;
+import com.kakaopay.homework.controller.dto.RefreshTokenRequest;
 import com.kakaopay.homework.controller.dto.RefreshTokenResponse;
 import com.kakaopay.homework.exception.InvalidTokenException;
 import com.kakaopay.homework.model.RefreshToken;
@@ -87,14 +89,7 @@ public class JwtTokenService {
     }
 
     @Transactional
-    public RefreshTokenResponse refreshAccessToken (String token) {
-        String[] arr = token.split(" ");
-        if (arr == null || arr.length < 2) {
-            throw new InvalidTokenException("Invalid authorization token");
-        }
-
-        token = arr[1];
-
+    public RefreshTokenResponse refreshAccessToken (@Authorization String token, RefreshTokenRequest request) {
         try {
             OAuth2AccessToken accessToken = tokenService.readAccessToken(token);
             if (accessToken == null) {
@@ -129,7 +124,11 @@ public class JwtTokenService {
                 throw new InvalidTokenException("Couldn't find refresh token");
             }
 
-            accessToken = tokenService.refreshAccessToken(refreshToken.getRefreshToken(), tokenRequest);
+            if (refreshToken.getRefreshToken().equals(request.getRefreshToken()) == false) {
+                throw new InvalidTokenException("Invalid refresh token");
+            }
+
+            accessToken = tokenService.refreshAccessToken(request.getRefreshToken(), tokenRequest);
             if (accessToken == null) {
                 token = accessToken.getValue();
                 throw new InvalidTokenException("Couldn't refresh access token");
@@ -147,6 +146,7 @@ public class JwtTokenService {
             RefreshTokenResponse response = new RefreshTokenResponse();
 
             response.setAccessToken(accessToken.getValue());
+            response.setRefreshToken(accessToken.getRefreshToken().getValue());
 
             return response;
         }

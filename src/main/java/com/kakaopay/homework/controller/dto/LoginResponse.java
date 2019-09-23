@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponse {
 
-    @JsonProperty(value = "user_id")
-    private String userId;
-
     @JsonProperty(value = "access_token")
     private String accessToken;
+
+    @JsonProperty(value = "refresh_token")
+    private String refreshToken;
 }
 

@@ -1,5 +1,6 @@
 package com.kakaopay.homework.controller;
 
+import com.kakaopay.homework.controller.dto.RefreshTokenRequest;
 import com.kakaopay.homework.controller.dto.RefreshTokenResponse;
 import com.kakaopay.homework.service.JwtTokenService;
 import io.swagger.annotations.Api;
@@ -9,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api(value = "Token", tags = {"Token"})
 @Slf4j
@@ -33,7 +31,8 @@ public class TokenController {
             value = "/refresh",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}
     )
-    public RefreshTokenResponse refreshToken (@RequestHeader(value = "Authorization") String authorization) {
-        return tokenService.refreshAccessToken(authorization);
+    public RefreshTokenResponse refreshToken (@RequestHeader(value = "Authorization") String authorization,
+                                              @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return tokenService.refreshAccessToken(authorization, refreshTokenRequest);
     }
 }

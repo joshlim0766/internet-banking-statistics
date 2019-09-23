@@ -1,15 +1,22 @@
 package com.kakaopay.homework.utility;
 
 import com.kakaopay.homework.exception.DeviceIdGenerateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 @Component
 public class DeviceIdGenerator {
+
+    @Autowired
+    private SecureRandom secureRandom;
 
     private byte[] sha256 (String msg) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -31,16 +38,17 @@ public class DeviceIdGenerator {
     }
 
     public String generate (String deviceName) {
-        try {
-            UUID uuid = null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("DIS_");
 
-            String source = "device-id:" + deviceName + "-" + System.currentTimeMillis();
-            uuid = UUID.nameUUIDFromBytes(source.getBytes("UTF-8"));
+        Random random = new Random();
 
-            return bytesToHex(sha256(uuid.toString()));
-        }
-        catch (Exception e) {
-            throw new DeviceIdGenerateException("Failed to generate device id : " + e.getMessage(), e);
-        }
+        IntStream.range(0, 10).forEach(i -> {
+            random.setSeed(secureRandom.nextLong());
+
+            sb.append(random.nextInt(10));
+        });
+
+        return sb.toString();
     }
 }

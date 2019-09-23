@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RefreshTokenResponse {
 
-    @JsonProperty(value = "accessToken")
+    @JsonProperty(value = "access_token")
     private String accessToken;
+
+    @JsonProperty(value = "refresh_token")
+    private String refreshToken;
 }

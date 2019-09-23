@@ -32,13 +32,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure (WebSecurity webSecurity) {
         webSecurity
                 .ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers(PathRequest.toH2Console()) // TODO: Test Only
-                .antMatchers("/resources/**")
-                .antMatchers("/swagger-ui.html")
-                .antMatchers("/swagger/**")
-                .antMatchers("/swagger-resources/**")
-                .antMatchers("/webjar/**");
+                    .requestMatchers(PathRequest.toH2Console())
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .antMatchers("/script/**")
+                    .antMatchers("/resources/**")
+                    .antMatchers("/swagger-ui.html")
+                    .antMatchers("/swagger/**")
+                    .antMatchers("/swagger-resources/**")
+                    .antMatchers("/webjar/**");
     }
 
     @Override
