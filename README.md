@@ -35,11 +35,12 @@ $ ./startup.sh
 1.2. 다른 조회 API들은 GET
 1.3. 2019년 사용율 예측 API는 POST
 2. Unique Device ID 생성 전략
-2.1 DIS_0000000000의 형태로 ID를 생성하기로 함.
-2.2 Postfix의 10자리 생성을 위해 다음 과정을 10회 반복
+2.1 DIS_0000000000000000의 형태로 ID를 생성하기로 함.
+2.2 Postfix의 16자리 생성을 위해 다음 과정을 16회 반복
 2.2.1 SHA1PRNG를 알고리즘으로 선택한 SecureRandom.nextLong으로 seed 생성
 2.2.2 Random.nextInt(10)으로 숫자 선택하여 Device ID에 concat
 2.3 문제에 나온 device id의 경우 문제 내용을 봐서는 device type id에 가까워서 저 정도로도 충분히 unique한 값을 보장해줄 수 있음.
+2.3.1 Test case에서 10만회 반복 테스트시 문제 없는 것 까지 확인
 2.4 실제 사용자 기기의 id를 생성하는 경우 UUID를 이용하는 것을 고려해보아야 할 것 같음.
 ```
 #### DB 설계

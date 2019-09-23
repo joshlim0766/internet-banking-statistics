@@ -147,5 +147,10 @@ public class UserService {
 
         return response;
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteUser (String userName) {
+        userRepository.deleteByUserName(userName);
+    }
 }
 

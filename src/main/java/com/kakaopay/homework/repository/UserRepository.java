@@ -8,5 +8,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByUserName (String userName);
 
     User findByUserName (String userName);
+
+    void deleteByUserName (String userName);
 }
 

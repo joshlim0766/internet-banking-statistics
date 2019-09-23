@@ -1,12 +1,13 @@
 package com.kakaopay.homework;
 
-import com.kakaopay.homework.controller.dto.DeviceDTO;
-import com.kakaopay.homework.controller.dto.DeviceResponse;
-import com.kakaopay.homework.controller.dto.StatisticsDTO;
-import com.kakaopay.homework.controller.dto.StatisticsResponse;
+import com.kakaopay.homework.controller.dto.*;
+import com.kakaopay.homework.model.User;
 import com.kakaopay.homework.repository.DeviceRepository;
+import com.kakaopay.homework.repository.UserRepository;
 import com.kakaopay.homework.service.DeviceService;
+import com.kakaopay.homework.service.JwtTokenService;
 import com.kakaopay.homework.service.StatisticsService;
+import com.kakaopay.homework.service.UserService;
 import com.kakaopay.homework.utility.DeviceIdGenerator;
 import com.kakaopay.homework.utility.RawStatisticsDataParser;
 import org.junit.Assert;
@@ -16,7 +17,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.*;
@@ -43,6 +49,15 @@ public class StatisticsSummaryApplicationTests {
     @Autowired
     private DeviceRepository deviceRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtTokenService tokenService;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Before
     public void init () {
         ClassPathResource resource = new ClassPathResource("data.csv");
@@ -52,6 +67,8 @@ public class StatisticsSummaryApplicationTests {
             Assert.assertTrue(dataFile.exists());
 
             statisticsService.loadData();
+
+            userService.deleteUser("testuser1234");
         }
         catch (Exception e) {
             Assert.assertTrue(false);
@@ -106,22 +123,11 @@ public class StatisticsSummaryApplicationTests {
         Set<String> generatedIds = new HashSet<>();
 
         IntStream.range(0, 100000)
-                .forEach(i ->generatedIds.add(deviceIdGenerator.generate("testDevice-" + i)));
+                .forEach(i ->generatedIds.add(deviceIdGenerator.generate()));
 
         Assert.assertTrue(generatedIds.size() == 100000);
 
         generatedIds.clear();
-
-        IntStream.range(0, 100)
-                .forEach(i -> {
-                    try {
-                        generatedIds.add(deviceIdGenerator.generate("testDevice"));
-                        Thread.sleep(10);
-                    }
-                    catch (Exception e) {}
-                });
-
-        Assert.assertTrue(generatedIds.size() == 100);
     }
 
     @Test
@@ -145,7 +151,7 @@ public class StatisticsSummaryApplicationTests {
     }
 
     @Test
-    public void testGetYearlyDeviceStatistics () {
+    public void testFirstRankDevices () {
         StatisticsResponse response = statisticsService.getFirstRankDevices();
 
         Assert.assertNotNull(response);
@@ -172,7 +178,7 @@ public class StatisticsSummaryApplicationTests {
     }
 
     @Test
-    public void testgetDeviceStatisticsByYear () {
+    public void testFirstRankDeviceYear () {
         LinkedHashMap<Short, LinkedHashMap<String, Double>> rateMap = loadRatePerDevice();
 
         try {
@@ -205,7 +211,7 @@ public class StatisticsSummaryApplicationTests {
     }
 
     @Test
-    public void testGetMaxRateYear () {
+    public void testFirstRankYear () {
         Map<String, DeviceDTO> deviceDTOMap = loadDevices();
         LinkedHashMap<Short, LinkedHashMap<String, Double>> rateMap = loadRatePerDevice();
 
@@ -249,5 +255,90 @@ public class StatisticsSummaryApplicationTests {
             Assert.assertTrue(maxRateEntry.getKey().shortValue() == dto.getYear());
             Assert.assertTrue(maxRateEntry.getValue().doubleValue() == dto.getRate().doubleValue());
         });
+    }
+
+    @Test
+    public void testSignupAndLogin () {
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+
+        map.add("client_id", "client");
+        map.add("user_name", "testuser1234");
+        map.add("password", "password1234");
+
+        try {
+            SingupResponse response = userService.signup(map);
+
+            Assert.assertNotNull(response);
+
+            Assert.assertNotNull(response.getAccessToken());
+            Assert.assertNotNull(response.getRefreshToken());
+            Assert.assertTrue(response.getUserId().equals("testuser1234"));
+
+            User user = userRepository.findByUserName("testuser1234");
+
+            Assert.assertNotNull(user);
+            Assert.assertTrue(user.getUserName().equals("testuser1234"));
+
+            LoginResponse loginResponse = userService.login(map);
+
+            Assert.assertNotNull(loginResponse);
+
+            Assert.assertNotNull(loginResponse.getAccessToken());
+            Assert.assertNotNull(loginResponse.getRefreshToken());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
+
+        map.set("user_name", "not_exists");
+
+        try {
+            LoginResponse loginResponse = userService.login(map);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(true);
+        }
+
+        map.set("user_name", "testuser1234");
+        map.set("password", "1111");
+
+        try {
+            LoginResponse loginResponse = userService.login(map);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void testRefreshToken () {
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+
+        map.add("client_id", "client");
+        map.add("user_name", "admin");
+        map.add("password", "admin1234");
+
+        try {
+            LoginResponse loginResponse = userService.login(map);
+
+            Assert.assertNotNull(loginResponse);
+
+            RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest();
+
+            refreshTokenRequest.setRefreshToken(loginResponse.getRefreshToken());
+
+            RefreshTokenResponse refreshTokenResponse = tokenService.refreshAccessToken(
+                    loginResponse.getAccessToken(), refreshTokenRequest);
+
+            Assert.assertNotNull(refreshTokenResponse.getAccessToken());
+            Assert.assertNotNull(refreshTokenResponse.getRefreshToken());
+            Assert.assertTrue(refreshTokenResponse.getAccessToken().equals(loginResponse.getAccessToken()) == false);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(false);
+        }
     }
 }

@@ -18,13 +18,13 @@ public class DeviceIdGenerator {
     @Autowired
     private SecureRandom secureRandom;
 
-    public String generate (String deviceName) {
+    public String generate () {
         StringBuilder sb = new StringBuilder();
         sb.append("DIS_");
 
         Random random = new Random();
 
-        IntStream.range(0, 10).forEach(i -> {
+        IntStream.range(0, 16).forEach(i -> {
             random.setSeed(secureRandom.nextLong());
 
             sb.append(random.nextInt(10));

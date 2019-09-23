@@ -54,7 +54,7 @@ public class StatisticsService {
     private void createDeviceInformation (String[] row, List<Device> devices) {
         IntStream.range(2, row.length)
                 .mapToObj(i -> row[i])
-                .map(deviceName -> new Device(idGenerator.generate(deviceName), deviceName))
+                .map(deviceName -> new Device(idGenerator.generate(), deviceName))
                 .forEach(device -> {
                     deviceRepository.saveAndFlush(device);
                     devices.add(device);
