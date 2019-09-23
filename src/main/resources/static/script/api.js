@@ -50,14 +50,21 @@ $('#signup').on('submit', (e) => {
             'password' : $('#signup_password').val()
         }
     }).then((response) => {
+        $('#op_result').text('');
         localStorage.setItem('access_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
 
-        $('#client_id').val('');
         $('#signup_user_name').val('');
         $('#signup_password').val('');
+        $('#signin_user_name').val('');
+        $('#signin_password').val('');
+        $('#signin_form').hide();
+
+        $('#token_refresh_form').show();
         $('#api_test_form').show();
-    });
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
+    })
 });
 
 $('#signin').on('submit', (e) => {
@@ -72,16 +79,18 @@ $('#signin').on('submit', (e) => {
             'password' : $('#signin_password').val()
         }
     }).then((response) => {
+        $('#op_result').text('');
         localStorage.setItem('access_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
 
-        $('#client_id').val('');
         $('#signin_user_name').val('');
         $('#signin_password').val('');
         $('#signin_form').hide();
 
         $('#token_refresh_form').show();
         $('#api_test_form').show();
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
     });
 });
 
@@ -97,8 +106,11 @@ $('#refresh_access_token').on('click', (e) => {
             'refresh_token' : localStorage.getItem('refresh_token')
         })
     }).then((response) => {
+        $('#op_result').text('');
         localStorage.setItem('access_token', response.access_token);
         localStorage.setItem('refresh_token', response.refresh_token);
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
     });
 });
 
@@ -110,7 +122,10 @@ $('#load_stat').on('click', (e) => {
             'Authorization' : getAuthorizationHeader()
         }
     }).then((response) => {
+        $('#op_result').text('');
         buildHtmlTable('#result_table', [{'result' : '성공'}]);
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
     });
 
 });
@@ -123,7 +138,10 @@ $('#get_device').on('click', (e) => {
             'Authorization' : getAuthorizationHeader()
         }
     }).then((response) => {
+        $('#op_result').text('');
         buildHtmlTable('#result_table', response.devices);
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
     });
 });
 
@@ -135,7 +153,10 @@ $('#get_first_rank_device').on('click', (e) => {
             'Authorization' : getAuthorizationHeader()
         }
     }).then((response) => {
+        $('#op_result').text('');
         buildHtmlTable('#result_table', response.devices);
+    }).catch((response) => {
+        $('#op_result').text(response.responseJSON.message);
     });
 });
 
@@ -151,9 +172,13 @@ $('#get_first_rank_device_of_year').on('click', (e) => {
                 'Authorization' : getAuthorizationHeader()
             }
         }).then((response) => {
+            $('#op_result').text('');
             buildHtmlTable('#result_table', [response.result]);
+            $('#year_input').val('');
             $('#year_input').hide();
             $('#check1').hide();
+        }).catch((response) => {
+            $('#op_result').text(response.responseJSON.message);
         });
     });
 });
@@ -170,9 +195,13 @@ $('#get_first_rank_year_of_device').on('click', (e) => {
                 'Authorization' : getAuthorizationHeader()
             }
         }).then((response) => {
+            $('#op_result').text('');
             buildHtmlTable('#result_table', [response.result]);
+            $('#device_id_input').val('');
             $('#device_id_input').hide();
             $('#check2').hide();
+        }).catch((response) => {
+            $('#op_result').text(response.responseJSON.message);
         });
     });
 });
@@ -191,9 +220,13 @@ $('#forecast').on('click', (e) => {
             },
             data : JSON.stringify({'device_id' : $('#device_id_input2').val()})
         }).then((response) => {
+            $('#op_result').text('');
             buildHtmlTable('#result_table', [response.result]);
+            $('#device_id_input2').val('');
             $('#device_id_input2').hide();
             $('#check3').hide();
+        }).catch((response) => {
+            $('#op_result').text(response.responseJSON.message);
         });
     });
 });

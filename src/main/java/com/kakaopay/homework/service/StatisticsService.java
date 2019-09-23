@@ -15,6 +15,8 @@ import com.kakaopay.homework.utility.DeviceIdGenerator;
 import com.kakaopay.homework.utility.DoubleExponentialSmoothingForLinearSeries;
 import com.kakaopay.homework.utility.RawStatisticsDataParser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -86,13 +89,20 @@ public class StatisticsService {
     public void loadData () {
         ClassPathResource resource = new ClassPathResource("data.csv");
 
+        InputStream inputStream = null;
+
         File dataFile = null;
 
         try {
-            dataFile = resource.getFile();
+            inputStream = resource.getInputStream();
+            dataFile = File.createTempFile("./test_data", ".csv");
+            FileUtils.copyInputStreamToFile(inputStream, dataFile);
         }
         catch (IOException e) {
             throw new CsvParseException("Failed to parse CSV : " + e.getMessage(), e);
+        }
+        finally {
+            IOUtils.closeQuietly(inputStream);
         }
 
         deviceRepository.deleteAll();
@@ -110,6 +120,8 @@ public class StatisticsService {
                 createStatisticsDetail(row, summary, devices);
             }
         });
+
+        FileUtils.deleteQuietly(dataFile);
     }
 
     @Transactional(readOnly = true)
@@ -154,7 +166,7 @@ public class StatisticsService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "localCache", key="#forecastRequest.deviceId")
+    @Cacheable(value = "localCache", key="'forecast.'.concat(#forecastRequest.deviceId)")
     public StatisticsResponse forecast (ForecastRequest forecastRequest) {
         List<StatisticsDTO> forecastSources = statisticsRepository.fetchForecastSources(forecastRequest.getDeviceId());
         if (forecastSources.size() <= 0) {
