@@ -18,25 +18,6 @@ public class DeviceIdGenerator {
     @Autowired
     private SecureRandom secureRandom;
 
-    private byte[] sha256 (String msg) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(msg.getBytes("UTF-8"));
-
-        return md.digest();
-    }
-
-    private String bytesToHex (byte[] hash) {
-        StringBuffer hexString = new StringBuffer();
-
-        for (int i = 0; i < hash.length; i++) {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
-        }
-
-        return hexString.toString();
-    }
-
     public String generate (String deviceName) {
         StringBuilder sb = new StringBuilder();
         sb.append("DIS_");

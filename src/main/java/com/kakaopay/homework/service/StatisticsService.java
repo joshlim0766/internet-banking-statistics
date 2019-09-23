@@ -154,6 +154,7 @@ public class StatisticsService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "localCache", key="#forecastRequest.deviceId")
     public StatisticsResponse forecast (ForecastRequest forecastRequest) {
         List<StatisticsDTO> forecastSources = statisticsRepository.fetchForecastSources(forecastRequest.getDeviceId());
         if (forecastSources.size() <= 0) {
