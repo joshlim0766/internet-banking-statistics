@@ -19,7 +19,7 @@ $ ./startup.sh
 
 **API Document**
 ```
-웹브라우저에서 http://${service_ip}:8080/swagger-ui.html로 접근 가능
+웹브라우저에서 http://${server_ip}:8080/swagger-ui.html로 접근 가능
 ```
 
 **Test Web Application**
