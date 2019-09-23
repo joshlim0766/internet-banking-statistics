@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @Component
 public class JwtTokenServiceAspect {
     @Around("execution(* *(.., @com.kakaopay.homework.annotation.Authorization (*), ..))")
-    public Object aroundResetToken (ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object aroundUsingAuthorizationMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] params = Stream.of(joinPoint.getArgs())
                 .map(arg -> {
                     if (arg instanceof String) {
