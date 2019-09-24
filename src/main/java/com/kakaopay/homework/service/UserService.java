@@ -123,7 +123,6 @@ public class UserService {
 
         OAuth2AccessToken accessToken = jwtTokenService.issueAccessToken(clientId, token);
         if (accessToken == null) {
-            refreshTokenRespository.deleteRefreshTokenByUser(user);
             throw new RuntimeException("Couldn't issue access token.");
         }
 
