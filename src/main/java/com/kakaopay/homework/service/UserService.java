@@ -113,7 +113,6 @@ public class UserService {
 
         User user = userRepository.findByUserName(userName);
         if (user == null) {
-            refreshTokenRespository.deleteRefreshTokenByUser(user);
             throw new UserNotFoundException("Couldn't find user(" + userName + ")");
         }
 
